@@ -5,68 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Studio Mixer Magic</title>
 <style>
-  /* --- GENERAL --- */
   body {
     font-family: 'Arial', sans-serif;
-    margin: 0; padding: 0;
-    background: linear-gradient(135deg, #1a1a2e, #4b0082);
-    color: #fff;
-    text-align: center;
-    overflow-x: hidden;
+    margin:0; padding:0;
+    background: linear-gradient(135deg,#1a1a2e,#4b0082);
+    color:#fff;
+    text-align:center;
+    overflow-x:hidden;
   }
-  h1 { font-size: 2.5rem; margin-top: 2rem; text-shadow: 2px 2px 5px #000; }
-  h2 { margin-top: 1.5rem; }
+  h1 { font-size:2.5rem; margin-top:2rem; text-shadow:2px 2px 5px #000; }
+  h2 { margin-top:1.5rem; }
 
-  /* --- BUTTONS --- */
   button {
-    font-size: 1.3rem;
-    padding: 1rem 2rem;
-    margin: 0.7rem;
-    cursor: pointer;
-    border-radius: 12px;
-    border: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-    font-weight: bold;
+    font-size:1.3rem;
+    padding:1rem 2rem;
+    margin:0.7rem;
+    cursor:pointer;
+    border-radius:12px;
+    border:none;
+    transition:transform 0.2s, box-shadow 0.2s;
+    font-weight:bold;
   }
-  button:hover { transform: scale(1.05); box-shadow: 0 0 15px #fff; }
-  .fortune-btn { background: #ff6f61; color: #fff; }
-  .song-btn { background: #ffda61; color: #000; }
-  .vibe-btn { background: #61ffda; color: #000; }
+  button:hover { transform:scale(1.05); box-shadow:0 0 15px #fff; }
+  .fortune-btn { background:#ff6f61; color:#fff; }
+  .song-btn { background:#ffda61; color:#000; }
+  .vibe-btn { background:#61ffda; color:#000; }
 
-  /* --- HIDDEN --- */
-  .hidden { display: none; }
+  .hidden { display:none; }
 
-  /* --- RESULT CARD --- */
   .result-card {
-    margin: 2rem auto;
+    margin:2rem auto;
     background: rgba(22,36,71,0.9);
-    padding: 2rem;
-    border-radius: 16px;
-    width: 80%;
-    max-width: 450px;
-    box-shadow: 0 0 20px #fff;
-    font-size: 1.2rem;
+    padding:2rem;
+    border-radius:16px;
+    width:80%;
+    max-width:450px;
+    box-shadow:0 0 20px #fff;
+    font-size:1.2rem;
   }
 
-  /* --- POLAROID SHARE --- */
   #shareCard {
-    margin: 1rem auto;
-    border-radius: 12px;
-    display: block;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    margin:1rem auto;
+    border-radius:12px;
+    display:block;
+    box-shadow:0 4px 20px rgba(0,0,0,0.6);
   }
 
-  /* --- SPARKLES --- */
   @keyframes twinkle {
     0%,100%{opacity:1;}
     50%{opacity:0.3;}
   }
   .sparkle {
-    position: absolute;
-    width: 4px; height: 4px;
-    background: #fff;
-    border-radius: 50%;
-    animation: twinkle 2s infinite;
+    position:absolute;
+    width:4px;height:4px;
+    background:#fff;
+    border-radius:50%;
+    animation:twinkle 2s infinite;
   }
 </style>
 </head>
@@ -75,37 +69,31 @@
 <h1>Studio Mixer Magic ✨🎧</h1>
 <p style="font-size:1.2rem;">Your vibe, your fortune, your theme song for 2026!</p>
 
-<!-- Step 1: Choose Fortune or Song -->
 <div id="step1">
   <button class="fortune-btn" onclick="chooseMode('fortune')">Give Me My 2026 Fortune 🔮</button>
   <button class="song-btn" onclick="chooseMode('song')">Give Me My 2026 Theme Song 🎵</button>
 </div>
 
-<!-- Step 2: Pick Vibe -->
 <div id="step2" class="hidden">
   <h2 id="vibePrompt">Pick your vibe</h2>
   <div id="vibeButtons"></div>
 </div>
 
-<!-- Step 3: Reveal Result -->
 <div id="step3" class="hidden">
   <div class="result-card" id="resultCard"></div>
-
-  <!-- Extra magic buttons -->
   <div id="extras" class="hidden">
     <button id="spotifyBtn" class="song-btn hidden" onclick="saveToSpotify()">Save to Spotify 🎵</button>
     <button id="downloadBtn" class="fortune-btn hidden" onclick="downloadFortune()">Download Magic 8 Ball 🔮</button>
     <button id="shareBtn" class="vibe-btn" onclick="sharePolaroid()">Share Your Vibe Card 📸</button>
   </div>
-
   <canvas id="shareCard" class="hidden"></canvas>
 </div>
 
-<!-- --- SPARKLES BACKGROUND --- -->
+<!-- Sparkles -->
 <script>
 for(let i=0;i<50;i++){
-  let sparkle = document.createElement('div');
-  sparkle.className = 'sparkle';
+  let sparkle=document.createElement('div');
+  sparkle.className='sparkle';
   sparkle.style.top=Math.random()*100+'%';
   sparkle.style.left=Math.random()*100+'%';
   sparkle.style.width=2+Math.random()*4+'px';
@@ -116,18 +104,18 @@ for(let i=0;i<50;i++){
 </script>
 
 <script>
-// --- DATA ---
+// DATA
 const vibes = [
-  {name: "Playful", emoji: "✨"},
-  {name: "Fierce", emoji: "🔥"},
-  {name: "Mysterious", emoji: "🌙"},
-  {name: "Creative", emoji: "🎨"},
-  {name: "Chaos", emoji: "🤡"},
-  {name: "Grounded", emoji: "🧘"},
-  {name: "Wildcard", emoji: "🎲"}
+  {name:"Playful",emoji:"✨"},
+  {name:"Fierce",emoji:"🔥"},
+  {name:"Mysterious",emoji:"🌙"},
+  {name:"Creative",emoji:"🎨"},
+  {name:"Chaos",emoji:"🤡"},
+  {name:"Grounded",emoji:"🧘"},
+  {name:"Wildcard",emoji:"🎲"}
 ];
 
-const fortunes = {
+const fortunes={
   Playful:["Your laughter is your superpower; use it liberally this year.","Unexpected joy will find you in the most curious places."],
   Fierce:["2026 is your year to roar; your boldness opens doors.","Strength comes from confidence—own every step forward."],
   Mysterious:["Secrets you uncover will spark your creativity.","Embrace the unknown; it holds your next big adventure."],
@@ -137,7 +125,7 @@ const fortunes = {
   Wildcard:["Something delightful and unusual will brighten your day.","Expect the unexpected and relish it."]
 };
 
-const songs = {
+const songs={
   Playful:["Good Times - Chic","Walking on Sunshine - Katrina & The Waves","September - Earth, Wind & Fire"],
   Fierce:["Eye of the Tiger - Survivor","Respect - Aretha Franklin","Barracuda - Heart"],
   Mysterious:["Dreams - Fleetwood Mac","Riders on the Storm - The Doors","Black Magic Woman - Santana"],
@@ -147,16 +135,15 @@ const songs = {
   Wildcard:["Space Oddity - David Bowie","Starman - David Bowie","Magic Carpet Ride - Steppenwolf"]
 };
 
-let mode = "";
-let lastResult = "";
+let mode="", lastResult="", lastVibe="";
 
-// --- FLOW ---
+// FLOW
 function chooseMode(selectedMode){
-  mode = selectedMode;
+  mode=selectedMode;
   document.getElementById('step1').classList.add('hidden');
   document.getElementById('step2').classList.remove('hidden');
-  const vibeButtonsDiv = document.getElementById('vibeButtons');
-  vibeButtonsDiv.innerHTML = "";
+  const vibeButtonsDiv=document.getElementById('vibeButtons');
+  vibeButtonsDiv.innerHTML="";
   vibes.forEach(v=>{
     let btn=document.createElement('button');
     btn.className='vibe-btn';
@@ -169,36 +156,33 @@ function chooseMode(selectedMode){
 }
 
 function revealResult(vibe){
+  lastVibe=vibe;
   document.getElementById('step2').classList.add('hidden');
   document.getElementById('step3').classList.remove('hidden');
-  const resultDiv = document.getElementById('resultCard');
+  const resultDiv=document.getElementById('resultCard');
   document.getElementById('extras').classList.remove('hidden');
-
   if(mode==='fortune'){
-    const fortuneList = fortunes[vibe];
-    const randomFortune = fortuneList[Math.floor(Math.random()*fortuneList.length)];
-    lastResult = randomFortune;
+    const fortuneList=fortunes[vibe];
+    const randomFortune=fortuneList[Math.floor(Math.random()*fortuneList.length)];
+    lastResult=randomFortune;
     resultDiv.innerHTML=`<h2>🔮 Your 2026 Fortune</h2><p>${randomFortune}</p>`;
     document.getElementById('downloadBtn').classList.remove('hidden');
     document.getElementById('spotifyBtn').classList.add('hidden');
   }else{
-    const songList = songs[vibe];
-    const randomSong = songList[Math.floor(Math.random()*songList.length)];
-    lastResult = randomSong;
+    const songList=songs[vibe];
+    const randomSong=songList[Math.floor(Math.random()*songList.length)];
+    lastResult=randomSong;
     resultDiv.innerHTML=`<h2>🎵 Your 2026 Theme Song</h2><p>${randomSong}</p>`;
     document.getElementById('spotifyBtn').classList.remove('hidden');
     document.getElementById('downloadBtn').classList.add('hidden');
   }
 }
 
-// --- EXTRAS ---
-function saveToSpotify(){
-  window.open(`https://open.spotify.com/search/${encodeURIComponent(lastResult)}`,"_blank");
-}
+// EXTRAS
+function saveToSpotify(){ window.open(`https://open.spotify.com/search/${encodeURIComponent(lastResult)}`,"_blank"); }
 
 function downloadFortune(){
-  const canvas = document.createElement('canvas');
-  canvas.width=400; canvas.height=200;
+  const canvas=document.createElement('canvas'); canvas.width=400; canvas.height=200;
   const ctx=canvas.getContext('2d');
   ctx.fillStyle="#162447"; ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.fillStyle="#FFD700"; ctx.font="20px Arial";
@@ -209,12 +193,47 @@ function downloadFortune(){
 }
 
 function sharePolaroid(){
-  const canvas = document.getElementById('shareCard'); canvas.classList.remove('hidden');
-  const ctx = canvas.getContext('2d'); canvas.width=400; canvas.height=400;
-  ctx.fillStyle="#fff"; ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="#000"; ctx.font="18px Arial"; ctx.fillText(mode==='fortune'?"🔮 2026 Fortune":"🎵 2026 Theme Song",20,30);
-  ctx.font="bold 20px Arial"; ctx.fillText(lastResult,20,70,360);
-  ctx.strokeStyle="#000"; ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
+  const canvas=document.getElementById('shareCard'); canvas.classList.remove('hidden');
+  const ctx=canvas.getContext('2d'); canvas.width=400; canvas.height=500;
+
+  // Gradient background
+  const gradient=ctx.createLinearGradient(0,0,0,canvas.height);
+  gradient.addColorStop(0,"#8e2de2"); gradient.addColorStop(0.5,"#ff416c"); gradient.addColorStop(1,"#ffda61");
+  ctx.fillStyle=gradient; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Polaroid border
+  ctx.strokeStyle="#fff"; ctx.lineWidth=10; ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
+
+  // Sparkles
+  for(let i=0;i<30;i++){
+    ctx.fillStyle="#fff"; const x=Math.random()*canvas.width; const y=Math.random()*canvas.height;
+    const size=2+Math.random()*3; ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+  }
+
+  // Header
+  ctx.fillStyle="#fff"; ctx.font="bold 22px Arial"; ctx.textAlign="center";
+  ctx.fillText(mode==='fortune'?"🔮 Your 2026 Fortune":"🎵 Your 2026 Theme Song",canvas.width/2,50);
+
+  // Vibe emoji
+  const vibeIcons={Playful:"✨🎉",Fierce:"🔥💪",Mysterious:"🌙🔮",Creative:"🎨🎶",Chaos:"🤡🎲",Grounded:"🧘🍃",Wildcard:"🎲🌟"};
+  const emoji=vibeIcons[lastVibe]||"🎲";
+  ctx.fillText(emoji,canvas.width/2,80);
+
+  // Main text
+  ctx.fillStyle="#fff"; ctx.font="18px Arial"; wrapText(ctx,lastResult,30,130,canvas.width-60,24);
+
+  // Footer
+  ctx.font="12px Arial"; ctx.fillStyle="#fff"; ctx.fillText("Studio Mixer Magic 2026",canvas.width/2,canvas.height-30);
+}
+
+// Wrap text helper
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+  const words=text.split(' '); let line='';
+  for(let n=0;n<words.length;n++){
+    const testLine=line+words[n]+' '; const metrics=ctx.measureText(testLine); const testWidth=metrics.width;
+    if(testWidth>maxWidth && n>0){ ctx.fillText(line,x+maxWidth/2,y); line=words[n]+' '; y+=lineHeight; } else{ line=testLine; }
+  }
+  ctx.fillText(line,x+maxWidth/2,y);
 }
 </script>
 
