@@ -1,536 +1,222 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Studio Vibe Machine — Jukebox Disco</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Mixer Magic</title>
 <style>
-:root{
-  --bg:#0b0710; --card:#121018; --accent:#ff51c7; --accent2:#3be8ff; --muted:#bdb8c8;
-  --glass: rgba(255,255,255,0.03);
-}
-body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:
- radial-gradient(ellipse at 10% 10%, rgba(59,232,255,0.03), transparent 10%),
- linear-gradient(180deg,#070409 0%, #0d0710 100%), #050306; color:#fff; -webkit-font-smoothing:antialiased}
-.header{padding:28px;text-align:center}
-.brand{font-size:20px;letter-spacing:1px;color:var(--muted)}
-.h1{font-size:34px;margin:6px 0 18px;font-weight:700;color:#fff;text-shadow:0 6px 18px rgba(59,232,255,0.06)}
-.container{max-width:920px;margin:0 auto;padding:18px}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:20px;margin:12px 0;box-shadow:0 6px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
-.choice-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:16px}
-.btn{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;color:#071018;padding:14px 18px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 8px 30px rgba(59,232,255,0.06);transform:translateY(0);transition:transform .12s ease}
-.btn:active{transform:translateY(3px)}
-.big{padding:18px 26px;font-size:18px}
-.vibes{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:18px}
-.vibe{background:var(--glass);padding:14px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
-.vibe .icon{font-size:22px}
-.reveal{display:none;padding:24px;text-align:center}
-.card-result{margin-top:18px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.04)}
-.song-title{font-weight:800;font-size:20px}
-.song-artist{margin-top:6px;color:var(--muted)}
-.actions{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
-.link-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
-.small{font-size:13px;padding:8px 10px}
-.footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
-.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,#ff51c7, #3be8ff);color:#071018;font-weight:700}
-.top-row{display:flex;gap:12px;align-items:center;justify-content:center}
-.hint{color:var(--muted);font-size:13px;margin-top:8px}
-.canvas-screenshot{display:none}
+  /* --- GENERAL --- */
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0; padding: 0;
+    background: linear-gradient(135deg, #1a1a2e, #4b0082);
+    color: #fff;
+    text-align: center;
+    overflow-x: hidden;
+  }
+  h1 { font-size: 2.5rem; margin-top: 2rem; text-shadow: 2px 2px 5px #000; }
+  h2 { margin-top: 1.5rem; }
+
+  /* --- BUTTONS --- */
+  button {
+    font-size: 1.3rem;
+    padding: 1rem 2rem;
+    margin: 0.7rem;
+    cursor: pointer;
+    border-radius: 12px;
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+  }
+  button:hover { transform: scale(1.05); box-shadow: 0 0 15px #fff; }
+  .fortune-btn { background: #ff6f61; color: #fff; }
+  .song-btn { background: #ffda61; color: #000; }
+  .vibe-btn { background: #61ffda; color: #000; }
+
+  /* --- HIDDEN --- */
+  .hidden { display: none; }
+
+  /* --- RESULT CARD --- */
+  .result-card {
+    margin: 2rem auto;
+    background: rgba(22,36,71,0.9);
+    padding: 2rem;
+    border-radius: 16px;
+    width: 80%;
+    max-width: 450px;
+    box-shadow: 0 0 20px #fff;
+    font-size: 1.2rem;
+  }
+
+  /* --- POLAROID SHARE --- */
+  #shareCard {
+    margin: 1rem auto;
+    border-radius: 12px;
+    display: block;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  }
+
+  /* --- SPARKLES --- */
+  @keyframes twinkle {
+    0%,100%{opacity:1;}
+    50%{opacity:0.3;}
+  }
+  .sparkle {
+    position: absolute;
+    width: 4px; height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 2s infinite;
+  }
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="brand">Studio Mixer • Interactive</div>
-  <div class="h1">The Studio Vibe Machine — Jukebox Disco</div>
-  <div class="hint">Scan, choose your vibe, pick Fortune ✨ or Theme Song 🎧 — one reveal per device.</div>
-</div>
-<div class="container">
-  <div class="card" id="introCard">
-    <div style="text-align:center">
-      <div style="font-weight:700">Ready to get cosmic?</div>
-      <div class="top-row" style="margin-top:12px">
-        <button class="btn big" id="fortuneBtn">Give Me My 2026 Fortune ✨</button>
-        <button class="btn big" id="songBtn">Give Me My 2026 Theme Song 🎧</button>
-      </div>
-      <div class="hint">Choose one — then pick a vibe. Results are one-time per device.</div>
-    </div>
-  </div>
 
-  <div class="card" id="vibeCard" style="display:none">
-    <div style="text-align:center;font-weight:700" id="modeTitle">Pick your vibe</div>
-    <div class="vibes" id="vibesGrid">
-      <!-- vibes injected here -->
-    </div>
-    <div style="text-align:center;margin-top:12px">
-      <button class="link-btn small" id="backBtn">← Back</button>
-    </div>
-  </div>
+<h1>Studio Mixer Magic ✨🎧</h1>
+<p style="font-size:1.2rem;">Your vibe, your fortune, your theme song for 2026!</p>
 
-  <div class="card reveal" id="revealCard">
-    <div id="animationArea">
-      <!-- animation -->
-    </div>
-    <div class="card-result" id="resultCard">
-      <!-- result appears here -->
-    </div>
-    <div class="actions" id="actionButtons">
-      <!-- share/save buttons -->
-    </div>
-    <div style="text-align:center;margin-top:12px">
-      <button class="link-btn small" id="anotherBtn">Get another (refresh allowed?)</button>
-    </div>
-  </div>
-
-  <div class="footer card">
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <div>Designed for your studio mixer • Jukebox Disco theme</div>
-      <div class="badge">1 reveal per device</div>
-    </div>
-    <div style="margin-top:8px" class="hint">To put this on your Google Site: host this HTML on GitHub Pages (free) and embed as an iframe. Instructions provided after the download link.</div>
-  </div>
+<!-- Step 1: Choose Fortune or Song -->
+<div id="step1">
+  <button class="fortune-btn" onclick="chooseMode('fortune')">Give Me My 2026 Fortune 🔮</button>
+  <button class="song-btn" onclick="chooseMode('song')">Give Me My 2026 Theme Song 🎵</button>
 </div>
 
-<!-- hidden canvas for screenshot -->
-<canvas id="cardCanvas" width="1000" height="600" class="canvas-screenshot"></canvas>
+<!-- Step 2: Pick Vibe -->
+<div id="step2" class="hidden">
+  <h2 id="vibePrompt">Pick your vibe</h2>
+  <div id="vibeButtons"></div>
+</div>
+
+<!-- Step 3: Reveal Result -->
+<div id="step3" class="hidden">
+  <div class="result-card" id="resultCard"></div>
+
+  <!-- Extra magic buttons -->
+  <div id="extras" class="hidden">
+    <button id="spotifyBtn" class="song-btn hidden" onclick="saveToSpotify()">Save to Spotify 🎵</button>
+    <button id="downloadBtn" class="fortune-btn hidden" onclick="downloadFortune()">Download Magic 8 Ball 🔮</button>
+    <button id="shareBtn" class="vibe-btn" onclick="sharePolaroid()">Share Your Vibe Card 📸</button>
+  </div>
+
+  <canvas id="shareCard" class="hidden"></canvas>
+</div>
+
+<!-- --- SPARKLES BACKGROUND --- -->
+<script>
+for(let i=0;i<50;i++){
+  let sparkle = document.createElement('div');
+  sparkle.className = 'sparkle';
+  sparkle.style.top=Math.random()*100+'%';
+  sparkle.style.left=Math.random()*100+'%';
+  sparkle.style.width=2+Math.random()*4+'px';
+  sparkle.style.height=2+Math.random()*4+'px';
+  sparkle.style.animationDuration=1+Math.random()*3+'s';
+  document.body.appendChild(sparkle);
+}
+</script>
 
 <script>
-// ====== DATA ======
+// --- DATA ---
 const vibes = [
-  {key:"playful", label:"✨ Playful", icon:"✨"},
-  {key:"fierce", label:"🔥 Fierce", icon:"🔥"},
-  {key:"mysterious", label:"🌙 Mysterious", icon:"🌙"},
-  {key:"creative", label:"🎨 Creative", icon:"🎨"},
-  {key:"chaos", label:"🤡 Chaos", icon:"🤡"},
-  {key:"grounded", label:"🧘 Grounded", icon:"🧘"},
-  {key:"cosmic", label:"🎲 Cosmic Curveball", icon:"🎲"}
+  {name: "Playful", emoji: "✨"},
+  {name: "Fierce", emoji: "🔥"},
+  {name: "Mysterious", emoji: "🌙"},
+  {name: "Creative", emoji: "🎨"},
+  {name: "Chaos", emoji: "🤡"},
+  {name: "Grounded", emoji: "🧘"},
+  {name: "Wildcard", emoji: "🎲"}
 ];
 
-// 14 per vibe * 7 = 98, +2 universal
-const songs = {
-  playful:[
-    {title:"Dancing Queen", artist:"ABBA"},
-    {title:"Levitating", artist:"Dua Lipa"},
-    {title:"Good as Hell", artist:"Lizzo"},
-    {title:"I'm Coming Out", artist:"Diana Ross"},
-    {title:"You Make My Dreams", artist:"Daryl Hall & John Oates"},
-    {title:"September", artist:"Earth, Wind & Fire"},
-    {title:"Blinding Lights", artist:"The Weeknd"},
-    {title:"Groove Is in the Heart", artist:"Deee-Lite"},
-    {title:"Holiday", artist:"Madonna"},
-    {title:"Wake Me Up Before You Go-Go", artist:"Wham!"},
-    {title:"Valerie", artist:"Mark Ronson ft. Amy Winehouse"},
-    {title:"Good Times", artist:"Chic"},
-    {title:"Shut Up and Dance", artist:"Walk The Moon"},
-    {title:"Daft Punk Is Playing at My House", artist:"LCD Soundsystem"}
-  ],
-  fierce:[
-    {title:"Run the World (Girls)", artist:"Beyoncé"},
-    {title:"Vogue", artist:"Madonna"},
-    {title:"Bad Reputation", artist:"Joan Jett"},
-    {title:"Respect", artist:"Aretha Franklin"},
-    {title:"Killing Me Softly", artist:"Fugees"},
-    {title:"Formation", artist:"Beyoncé"},
-    {title:"Edge of Seventeen", artist:"Stevie Nicks"},
-    {title:"Back to Black", artist:"Amy Winehouse"},
-    {title:"Heart of Glass", artist:"Blondie"},
-    {title:"Juice", artist:"Lizzo"},
-    {title:"Rebel Rebel", artist:"David Bowie"},
-    {title:"I Will Survive", artist:"Gloria Gaynor"},
-    {title:"No Church in the Wild", artist:"Kanye & Jay-Z"},
-    {title:"Express Yourself", artist:"Madonna"}
-  ],
-  mysterious:[
-    {title:"Wicked Game", artist:"Chris Isaak"},
-    {title:"Riders on the Storm", artist:"The Doors"},
-    {title:"Bizarre Love Triangle", artist:"New Order"},
-    {title:"Teardrop", artist:"Massive Attack"},
-    {title:"Into My Arms", artist:"Nick Cave"},
-    {title:"Nightshift", artist:"Commodores"},
-    {title:"Pale Shelter", artist:"Tears for Fears"},
-    {title:"Black Coffee", artist:"Peggy Lee"},
-    {title:"Atmosphere", artist:"Joy Division"},
-    {title:"Blue Monday", artist:"New Order"},
-    {title:"Wuthering Heights", artist:"Kate Bush"},
-    {title:"Tennessee", artist:"Arrested Development"},
-    {title:"Under the Milky Way", artist:"The Church"},
-    {title:"Mad World", artist:"Tears for Fears"}
-  ],
-  creative:[
-    {title:"Heroes", artist:"David Bowie"},
-    {title:"Purple Rain", artist:"Prince"},
-    {title:"P.Y.T. (Pretty Young Thing)", artist:"Michael Jackson"},
-    {title:"Dreams", artist:"Fleetwood Mac"},
-    {title:"Take Me Out", artist:"Franz Ferdinand"},
-    {title:"Ain't No Mountain High Enough", artist:"Marvin Gaye & Tammi Terrell"},
-    {title:"Cranes in the Sky", artist:"Solange"},
-    {title:"Sinnerman", artist:"Nina Simone"},
-    {title:"Big Yellow Taxi", artist:"Joni Mitchell"},
-    {title:"Dog Days Are Over", artist:"Florence + The Machine"},
-    {title:"This Must Be the Place", artist:"Talking Heads"},
-    {title:"There Is a Light That Never Goes Out", artist:"The Smiths"},
-    {title:"Take On Me", artist:"a-ha"},
-    {title:"Is This Love", artist:"Bob Marley & The Wailers"}
-  ],
-  chaos:[
-    {title:"Hey Ya!", artist:"Outkast"},
-    {title:"Tubthumping", artist:"Chumbawamba"},
-    {title:"Sabotage", artist:"Beastie Boys"},
-    {title:"It's Raining Men", artist:"The Weather Girls"},
-    {title:"Psycho Killer", artist:"Talking Heads"},
-    {title:"Seven Nation Army", artist:"The White Stripes"},
-    {title:"I Want You (She's So Heavy)", artist:"The Beatles"},
-    {title:"I Feel for You", artist:"Chaka Khan"},
-    {title:"Addicted to Love", artist:"Robert Palmer"},
-    {title:"Canned Heat", artist:"Jamiroquai"},
-    {title:"Crazy in Love", artist:"Beyoncé"},
-    {title:"Song 2", artist:"Blur"},
-    {title:"Bad Guy", artist:"Billie Eilish"},
-    {title:"Lose Yourself", artist:"Eminem"}
-  ],
-  grounded:[
-    {title:"Lovely Day", artist:"Bill Withers"},
-    {title:"Let's Stay Together", artist:"Al Green"},
-    {title:"What a Wonderful World", artist:"Louis Armstrong"},
-    {title:"Harvest Moon", artist:"Neil Young"},
-    {title:"Stand by Me", artist:"Ben E. King"},
-    {title:"Come Away With Me", artist:"Norah Jones"},
-    {title:"Kiss of Life", artist:"Sade"},
-    {title:"The Look of Love", artist:"Dusty Springfield"},
-    {title:"Moon River", artist:"Andy Williams"},
-    {title:"Stand", artist:"Sly & The Family Stone"},
-    {title:"Ain't No Sunshine", artist:"Bill Withers"},
-    {title:"Lovely Rita", artist:"The Beatles"},
-    {title:"Cry Me a River", artist:"Julie London"},
-    {title:"River", artist:"Leon Bridges"}
-  ],
-  cosmic:[
-    {title:"Space Oddity", artist:"David Bowie"},
-    {title:"Starman", artist:"David Bowie"},
-    {title:"Rocket Man", artist:"Elton John"},
-    {title:"Intergalactic", artist:"Beastie Boys"},
-    {title:"Starboy", artist:"The Weeknd"},
-    {title:"Life on Mars?", artist:"David Bowie"},
-    {title:"Major Tom", artist:"Peter Schilling"},
-    {title:"Spaceman", artist:"The Killers"},
-    {title:"Cosmic Dancer", artist:"T. Rex"},
-    {title:"Good Times Roll", artist:"The Cars"},
-    {title:"Space Truckin'", artist:"Deep Purple"},
-    {title:"Young Turks", artist:"Rod Stewart"},
-    {title:"Planet Claire", artist:"The B-52's"},
-    {title:"Leopard-Skin Pill-Box Hat", artist:"Bob Dylan"}
-  ],
-  universal:[
-    {title:"Get Lucky", artist:"Daft Punk ft. Pharrell Williams"},
-    {title:"Dancing in the Moonlight", artist:"Toploader"}
-  ]
-};
-
 const fortunes = {
-  playful:[
-    "This year invites you to chase small joys; a spontaneous hello will unlock a new friendship. Keep your curiosity loud and your snacks handy.",
-    "Expect a creative spark to appear in an unexpected place; follow it for a week and watch it bloom into a bright opportunity.",
-    "Small acts of kindness will return tenfold—say yes to the tiny adventure and relish how it shifts your rhythm.",
-    "You will stumble upon a delightful routine that makes mornings feel like confetti; hold it close and protect the time it offers you.",
-    "A playful impulse becomes the bridge to someone who shares your odd sense of humor—lean in and laugh loudly.",
-    "Your spontaneous idea will get a nod from someone influential; plant the seed and water it with follow-up messages.",
-    "Bring a little color to your workspace; that deliberate brightness will change who notices you and how you show up.",
-    "A lighthearted risk pays off—try the unexpected outfit or the new song, and let compliments be your leftover confetti.",
-    "Your laughter will be contagious; use it as soft leadership and invite others into the room with warmth.",
-    "A tiny detour leads to a new favorite spot; make space for curiosity and collect the little discoveries.",
-    "This year your talents will be noticed when you share them openly; public joy is magnetic—be visible.",
-    "A creative friendship will push you into new projects—say yes even if it’s slightly unfamiliar.",
-    "Playful persistence will surprise you; keep showing up and watch momentum turn into momentum you can be proud of.",
-    "A forgotten hobby returns and becomes a gentle anchor; give it five minutes a day and let it grow."
-  ],
-  fierce:[
-    "You will claim ground this year; a clear boundary you state will become a roadmap for others to follow. Own it with calm pride.",
-    "A bold choice opens a door—courage is the currency, and clarity your compass. Make the decision you’ve been rehearsing.",
-    "Someone will challenge your thinking; respond with firmness and curiosity—both will elevate the outcome.",
-    "Confidence becomes practical power—speak the plan, then schedule the steps that make it real.",
-    "A leadership opportunity appears disguised as a small ask; accept it and prove how quietly decisive you can be.",
-    "This year your voice gains volume in the right rooms—use it with precision and a little grace.",
-    "You’ll rediscover an inner discipline that fuels creative work—build a short, daily habit and guard it fiercely.",
-    "A negotiation turns in your favor through preparation; weigh your options and advocate clearly for what you need.",
-    "You will break a pattern that no longer fits; the first honest conversation frees more than you expect.",
-    "An ally appears unexpectedly; welcome their help and allow the collaboration to strengthen your outcome.",
-    "A risk taken with care expands your possibilities—calculated boldness will be rewarded.",
-    "A project you steward gains momentum; step into visibility and accept the recognition it brings.",
-    "This year you’ll find the right yes—one decision aligns the next steps with your long-term aims.",
-    "Forge forward with a plan; your steady motion becomes the force that shapes the year ahead."
-  ],
-  mysterious:[
-    "A quiet intuition blooms into a helpful guide; listen to small, repeated nudges and trust their strange logic.",
-    "You will notice a pattern no one else has named—use that insight to create a soft advantage.",
-    "Secrets serve you kindly when used to protect your growth; keep one creative idea private until it’s ready to shine.",
-    "A late-night thought turns into a meaningful change; honor your inner timing and schedule a gentle next step.",
-    "An enigmatic opportunity arrives; approach it with curiosity rather than fear and you’ll find the shape beneath the shadow.",
-    "Your depth becomes an asset this year; allow longer pauses and let your responses gain weight.",
-    "You’ll uncover an unexpected resource in a quiet corner—watch for small, overlooked options that matter.",
-    "A subtle shift in routine reveals new creative space; rearrange one thing and watch the rest breathe easier.",
-    "A conversation held in confidence opens a door—choose words carefully and gratitude will follow.",
-    "Your steady presence comforts others; that quiet power will bring new collaborators to your side.",
-    "An artistic intuition guides a practical decision—blend the unseen with the useful and trust the result.",
-    "A gentle mystery will encourage you to ask better questions; curiosity is your compass.",
-    "This year you’ll be guided by feeling more than plan; that rhythm will lead to surprising clarity.",
-    "A hush becomes a gift—make room for silence and listen for the next small instruction."
-  ],
-  creative:[
-    "A new idea grows when you let two unexpected things collide—pair a hobby with a task and see what appears.",
-    "Your best work arrives from playful constraints; pick a small limit and flourish inside it.",
-    "An experiment this year yields more learning than success—treat results as data and keep iterating.",
-    "A collaborator offers a fresh perspective; say yes to the first draft of connection and refine together.",
-    "You will find a creative routine that rewards consistency; protect that time as a small sacred hour each day.",
-    "A project finds you through a casual share; put your work where eyes can find it and trust the rest.",
-    "A new medium invites a burst of expression—try one unfamiliar tool and let curiosity lead.",
-    "Creative rest is not optional; schedule a soft pause and allow insights to arrive without pressure.",
-    "Your bold idea will resonate once you explain the why—practice the short version and share it proudly.",
-    "A series of small drafts becomes a portfolio; accumulate tiny wins and watch them compound.",
-    "This year your unique voice connects with the right audience—be brave about publishing imperfect work.",
-    "A resource appears at just the right moment; accept the help and redirect it toward what excites you.",
-    "You’ll surprise yourself by starting something you once thought too big—break it into small, beautiful parts.",
-    "A day spent exploring leads to the next chapter; collect images, sounds, and notes as future fuel."
-  ],
-  chaos:[
-    "A delightful disruption shifts your routine; lean into the mess and find the emergent opportunity.",
-    "A chaotic choice becomes clarifying—after the noise settles, a surprising priority will reveal itself.",
-    "This year rewards spirited leaps; choose what scares you in the best possible way and then make a plan.",
-    "A fluke encounter sends you down an interesting path—say yes to spontaneous detours and keep a map in your pocket.",
-    "You’ll find luck in unexpected places; cultivate playful curiosity and let chance be a collaborator.",
-    "A project born from silliness becomes a serious favorite; give time to the strange ideas.",
-    "Your willingness to take creative risks will magnetize others—chaos done with heart becomes a community builder.",
-    "A sudden pivot proves beneficial; stay nimble and let improvisation guide the next step.",
-    "A mistake becomes a story that pays off—share it honestly and watch doors open.",
-    "This year your energy attracts lively people; let them in and learn from the new rhythms.",
-    "A wild idea asks for a test—try a tiny pilot and enjoy what you learn.",
-    "You’ll be surprised by how well a messy experiment can land—keep the receipts and iterate.",
-    "A chaotic week contains a kernel of clarity; harvest that seed and plant it again.",
-    "A playful rebellion becomes a signature move—own it and let your style lead."
-  ],
-  grounded:[
-    "A steady habit anchors an unpredictable week; build one slow ritual and protect it like a lighthouse.",
-    "You will find clarity by simplifying—reduce one commitment and notice how your energy returns.",
-    "A calm conversation resolves tension; lead with curiosity and watch walls soften.",
-    "Financial steadiness appears when you make small, repeatable choices—save a little, often.",
-    "A gentle morning routine becomes your secret superpower; prioritize it and observe the change.",
-    "Your presence will be the most meaningful gift—show up consistently and with listening at the center.",
-    "A small boundary protects your time and invites deeper work—practice saying no quietly.",
-    "You will be guided by practicality this year; choose options that keep you moving forward steadily.",
-    "A reliable person appears in your orbit; welcome their steadiness and reciprocate.",
-    "A slow decision turns out to be the right one; trust pacing more than speed.",
-    "You will discover a grounding place—return to it when choices feel loud and let it calm you.",
-    "Daily rituals compound; small acts of care will change how big days feel.",
-    "This year rewards patience—build long arcs and honor incremental progress.",
-    "A simple daily practice brings surprising joy and becomes a soft daily gift."
-  ],
-  cosmic:[
-    "A cosmic surprise nudges you toward new perspectives; be ready for delightful interruptions.",
-    "Stars align for a small but meaningful expansion—say yes when timing feels slightly uncanny.",
-    "An idea that seemed out of reach returns as an approachable plan—follow the subtle signs.",
-    "This year asks you to be brave about the unknown; curiosity will translate into discovery.",
-    "A synchronicity points you toward a helpful connection; follow the breadcrumb with playful trust.",
-    "You’ll meet a person who expands how you see your path—listen to their unusual suggestions.",
-    "A day of strange coincidences leads to a decision that opens new creative space.",
-    "The universe offers small winks; pay attention to repeating numbers, songs, or phrases and follow them.",
-    "A plan forms from scattered hints—collect the pieces and allow meaning to emerge.",
-    "Unexpected alignment helps a project lift off; tend to the small details and let momentum build.",
-    "This year you’ll be invited to a surprising experiment—participate with an open heart.",
-    "An odd impulse brings practical benefit—try the curious option and keep what works.",
-    "You will gain clarity through imaginative play—invent scenarios and let insight rise.",
-    "A gentle cosmic push sets a new course—accept it and watch the year unfold."
-  ],
-  universal:[
-    "A luminous theme emerges: be kind, be curious, and keep making small, brave choices. The year will meet you there.",
-    "An unexpected door opens when you show up honestly—bring your full self and celebrate the strange, helpful moments."
-  ]
+  Playful:["Your laughter is your superpower; use it liberally this year.","Unexpected joy will find you in the most curious places."],
+  Fierce:["2026 is your year to roar; your boldness opens doors.","Strength comes from confidence—own every step forward."],
+  Mysterious:["Secrets you uncover will spark your creativity.","Embrace the unknown; it holds your next big adventure."],
+  Creative:["Your imagination is a magnet for exciting opportunities.","Inspiration strikes when you least expect it—stay ready."],
+  Chaos:["A little chaos brings colorful surprises your way.","Trust the whirlwind; it leads to unexpected brilliance."],
+  Grounded:["Your calm presence stabilizes those around you.","Focus and patience unlock rewards this year."],
+  Wildcard:["Something delightful and unusual will brighten your day.","Expect the unexpected and relish it."]
 };
 
-// ====== UI LOGIC ======
-let mode = null; // "fortune" or "song"
-const introCard = document.getElementById('introCard');
-const vibeCard = document.getElementById('vibeCard');
-const revealCard = document.getElementById('revealCard');
-const vibesGrid = document.getElementById('vibesGrid');
-const modeTitle = document.getElementById('modeTitle');
-const resultCard = document.getElementById('resultCard');
-const actionButtons = document.getElementById('actionButtons');
+const songs = {
+  Playful:["Good Times - Chic","Walking on Sunshine - Katrina & The Waves","September - Earth, Wind & Fire"],
+  Fierce:["Eye of the Tiger - Survivor","Respect - Aretha Franklin","Barracuda - Heart"],
+  Mysterious:["Dreams - Fleetwood Mac","Riders on the Storm - The Doors","Black Magic Woman - Santana"],
+  Creative:["Bohemian Rhapsody - Queen","Life on Mars? - David Bowie","Superstition - Stevie Wonder"],
+  Chaos:["Sabotage - Beastie Boys","Shake It Out - Florence + The Machine","Crosstown Traffic - Jimi Hendrix"],
+  Grounded:["Lovely Day - Bill Withers","Here Comes The Sun - The Beatles","Lean on Me - Bill Withers"],
+  Wildcard:["Space Oddity - David Bowie","Starman - David Bowie","Magic Carpet Ride - Steppenwolf"]
+};
 
-document.getElementById('fortuneBtn').onclick = ()=>startMode('fortune');
-document.getElementById('songBtn').onclick = ()=>startMode('song');
-document.getElementById('backBtn').onclick = ()=>{ showIntro(); };
-document.getElementById('anotherBtn').onclick = ()=>{ resetForAnother(); };
+let mode = "";
+let lastResult = "";
 
-function showIntro(){ introCard.style.display='block'; vibeCard.style.display='none'; revealCard.style.display='none'; }
-function startMode(m){
-  // enforce one reveal per device
-  if(localStorage.getItem('vibeMachine_revealed')){
-    alert("One reveal per device — thanks for keeping it cozy! If you'd like another, please use a different device.");
-    return;
-  }
-  mode = m;
-  introCard.style.display='none';
-  vibeCard.style.display='block';
-  revealCard.style.display='none';
-  modeTitle.textContent = m==='fortune' ? "Pick your vibe — Fortune ✨" : "Pick your vibe — Theme Song 🎧";
-  renderVibes();
-}
-function renderVibes(){
-  vibesGrid.innerHTML='';
+// --- FLOW ---
+function chooseMode(selectedMode){
+  mode = selectedMode;
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  const vibeButtonsDiv = document.getElementById('vibeButtons');
+  vibeButtonsDiv.innerHTML = "";
   vibes.forEach(v=>{
-    const el = document.createElement('div'); el.className='vibe';
-    el.innerHTML = `<div class="icon">${v.icon}</div><div style="font-weight:700;margin-top:8px">${v.label}</div>`;
-    el.onclick = ()=> chooseVibe(v.key);
-    vibesGrid.appendChild(el);
+    let btn=document.createElement('button');
+    btn.className='vibe-btn';
+    btn.textContent=`${v.emoji} ${v.name}`;
+    btn.onclick=()=>revealResult(v.name);
+    vibeButtonsDiv.appendChild(btn);
   });
-}
-function chooseVibe(vibeKey){
-  // select random item from appropriate list
-  vibeCard.style.display='none';
-  revealCard.style.display='block';
-  resultCard.innerHTML = `<div style="opacity:.5">Loading your ${mode==='fortune' ? 'fortune' : 'song'}...</div>`;
-  // small reveal animation
-  animateReveal().then(()=> {
-    const item = pickItem(vibeKey);
-    displayResult(item, vibeKey);
-    localStorage.setItem('vibeMachine_revealed', (new Date()).toISOString());
-  });
+  document.getElementById('vibePrompt').textContent=
+    mode==='fortune'?"Pick your vibe for a Fortune 🔮":"Pick your vibe for a Theme Song 🎵";
 }
 
-function pickItem(vibeKey){
-  // for songs/forthunes, choose from the vibe bucket; if none, pick from universal
-  if(mode === 'song'){
-    const arr = songs[vibeKey] && songs[vibeKey].length ? songs[vibeKey] : songs['universal'];
-    return {...arr[Math.floor(Math.random()*arr.length)], type:'song'};
-  } else {
-    const arr = fortunes[vibeKey] && fortunes[vibeKey].length ? fortunes[vibeKey] : fortunes['universal'];
-    return {text: arr[Math.floor(Math.random()*arr.length)], type:'fortune'};
+function revealResult(vibe){
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.remove('hidden');
+  const resultDiv = document.getElementById('resultCard');
+  document.getElementById('extras').classList.remove('hidden');
+
+  if(mode==='fortune'){
+    const fortuneList = fortunes[vibe];
+    const randomFortune = fortuneList[Math.floor(Math.random()*fortuneList.length)];
+    lastResult = randomFortune;
+    resultDiv.innerHTML=`<h2>🔮 Your 2026 Fortune</h2><p>${randomFortune}</p>`;
+    document.getElementById('downloadBtn').classList.remove('hidden');
+    document.getElementById('spotifyBtn').classList.add('hidden');
+  }else{
+    const songList = songs[vibe];
+    const randomSong = songList[Math.floor(Math.random()*songList.length)];
+    lastResult = randomSong;
+    resultDiv.innerHTML=`<h2>🎵 Your 2026 Theme Song</h2><p>${randomSong}</p>`;
+    document.getElementById('spotifyBtn').classList.remove('hidden');
+    document.getElementById('downloadBtn').classList.add('hidden');
   }
 }
 
-function animateReveal(){
-  return new Promise(res=>{
-    const area = document.getElementById('animationArea');
-    area.innerHTML='';
-    if(mode==='song'){
-      // jukebox lights
-      const box = document.createElement('div');
-      box.style.padding='22px';
-      box.innerHTML = `<div style="font-weight:800;font-size:18px">Spinning the disco jukebox...</div>
-      <div style="margin-top:12px"><div style="height:8px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;width:0%" id="bar"></div></div>`;
-      area.appendChild(box);
-      let w=0; const int = setInterval(()=>{ w+=10; document.getElementById('bar').style.width = w+'%'; if(w>=100){ clearInterval(int); setTimeout(()=>{ area.innerHTML=''; res(); },300) }},120);
-    } else {
-      // magic 8 ball
-      const orb = document.createElement('div');
-      orb.style.width='160px'; orb.style.height='160px'; orb.style.margin='10px auto'; orb.style.borderRadius='50%'; orb.style.background='radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06), rgba(0,0,0,0.2)), linear-gradient(180deg,#071018,#0b0710)'; orb.style.display='flex'; orb.style.alignItems='center'; orb.style.justifyContent='center';
-      orb.innerHTML = `<div style="width:94px;height:94px;border-radius:50%;background:linear-gradient(180deg,#08121a,#022231);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800;font-size:14px">8 • 2 • 6</div>`;
-      area.appendChild(orb);
-      setTimeout(()=>{ area.innerHTML=''; res(); },1200);
-    }
-  });
+// --- EXTRAS ---
+function saveToSpotify(){
+  window.open(`https://open.spotify.com/search/${encodeURIComponent(lastResult)}`,"_blank");
 }
 
-function displayResult(item, vibeKey){
-  actionButtons.innerHTML='';
-  if(item.type === 'song'){
-    resultCard.innerHTML = `<div style="text-align:center">
-      <div class="song-title">${escapeHtml(item.title)}</div>
-      <div class="song-artist">${escapeHtml(item.artist)}</div>
-      <div style="margin-top:8px;color:var(--muted);font-size:14px">Vibe: ${vibeKey}</div>
-    </div>`;
-    // Save to Spotify / Apple Music search links
-    const q = encodeURIComponent(item.title + ' ' + item.artist);
-    const sp = `https://open.spotify.com/search/${encodeURIComponent(item.title + ' ' + item.artist)}`;
-    const am = `https://music.apple.com/us/search?term=${q}`;
-    const yt = `https://www.youtube.com/results?search_query=${q}`;
-    const saveBtn = document.createElement('a'); saveBtn.className='link-btn'; saveBtn.href=sp; saveBtn.target='_blank'; saveBtn.textContent='Save / Open on Spotify';
-    const appleBtn = document.createElement('a'); appleBtn.className='link-btn'; appleBtn.href=am; appleBtn.target='_blank'; appleBtn.textContent='Open on Apple Music';
-    const ytBtn = document.createElement('a'); ytBtn.className='link-btn'; ytBtn.href=yt; ytBtn.target='_blank'; ytBtn.textContent='Watch on YouTube';
-    actionButtons.appendChild(saveBtn); actionButtons.appendChild(appleBtn); actionButtons.appendChild(ytBtn);
-
-    const shareBtn = document.createElement('button'); shareBtn.className='btn small'; shareBtn.textContent='Share your song card';
-    shareBtn.onclick = ()=> generateCardImage(item, vibeKey, 'song');
-    actionButtons.appendChild(shareBtn);
-
-  } else {
-    resultCard.innerHTML = `<div style="text-align:center">
-      <div style="font-weight:800;font-size:18px">Your 2026 Fortune</div>
-      <div style="margin-top:12px;color:var(--muted)">${escapeHtml(item.text)}</div>
-    </div>`;
-    const dlBtn = document.createElement('button'); dlBtn.className='btn small'; dlBtn.textContent='Download Fortune';
-    dlBtn.onclick = ()=> generateCardImage(item, vibeKey, 'fortune');
-    actionButtons.appendChild(dlBtn);
-
-    const shareBtn = document.createElement('button'); shareBtn.className='link-btn small'; shareBtn.textContent='Share on socials';
-    shareBtn.onclick = ()=> generateCardImage(item, vibeKey, 'fortune');
-    actionButtons.appendChild(shareBtn);
-  }
+function downloadFortune(){
+  const canvas = document.createElement('canvas');
+  canvas.width=400; canvas.height=200;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle="#162447"; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#FFD700"; ctx.font="20px Arial";
+  ctx.fillText("🔮 Your 2026 Fortune",50,50);
+  ctx.fillText(lastResult,20,100,360);
+  const link=document.createElement('a'); link.download="magic8ball_fortune.png";
+  link.href=canvas.toDataURL(); link.click();
 }
 
-// ====== CARD IMAGE GENERATOR ======
-function generateCardImage(item, vibeKey, kind){
-  const c = document.getElementById('cardCanvas');
-  const ctx = c.getContext('2d');
-  // background
-  ctx.fillStyle = '#080612';
-  ctx.fillRect(0,0,c.width,c.height);
-  // disco gradient
-  const g = ctx.createLinearGradient(0,0,c.width,0);
-  g.addColorStop(0,'#ff51c7'); g.addColorStop(0.5,'#3be8ff'); g.addColorStop(1,'#a56bff');
-  ctx.fillStyle = g;
-  // rounded rect
-  roundRect(ctx,60,40,c.width-120,c.height-120,24);
-  ctx.fillStyle = '#070812';
-  ctx.fill();
-  // header
-  ctx.fillStyle = '#fff'; ctx.font = '38px serif'; ctx.fillText(kind==='song' ? 'Your Theme Song' : 'Your 2026 Fortune', 100, 110);
-  ctx.font = '22px serif'; ctx.fillStyle='#bdb8c8'; ctx.fillText(vibeKey.toUpperCase(), 100, 140);
-  if(kind==='song'){
-    ctx.font='32px serif'; ctx.fillStyle='#fff'; ctx.fillText(item.title, 100, 210);
-    ctx.font='20px serif'; ctx.fillStyle='#bdb8c8'; ctx.fillText('— ' + item.artist, 100, 250);
-  } else {
-    // wrap fortune text
-    ctx.font='20px serif'; ctx.fillStyle='#fff';
-    wrapText(ctx, item.text, 100, 200, c.width-240, 28);
-  }
-  // footer accent
-  ctx.font='16px serif'; ctx.fillStyle='#bdb8c8';
-  ctx.fillText('Studio Vibe Machine • Jukebox Disco', 100, c.height-70);
-
-  // convert to image and prompt download
-  const data = c.toDataURL('image/png');
-  const a = document.createElement('a'); a.href=data; a.download = `${kind}_${vibeKey}.png`; a.click();
+function sharePolaroid(){
+  const canvas = document.getElementById('shareCard'); canvas.classList.remove('hidden');
+  const ctx = canvas.getContext('2d'); canvas.width=400; canvas.height=400;
+  ctx.fillStyle="#fff"; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#000"; ctx.font="18px Arial"; ctx.fillText(mode==='fortune'?"🔮 2026 Fortune":"🎵 2026 Theme Song",20,30);
+  ctx.font="bold 20px Arial"; ctx.fillText(lastResult,20,70,360);
+  ctx.strokeStyle="#000"; ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
 }
-
-// helper roundRect
-function roundRect(ctx,x,y,w,h,r){
-  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
-}
-
-// text wrap
-function wrapText(ctx, text, x, y, maxWidth, lineHeight){
-  const words = text.split(' ');
-  let line=''; let testLine; let metrics; let currentY=y;
-  for(let n=0;n<words.length;n++){
-    testLine = line + words[n] + ' ';
-    metrics = ctx.measureText(testLine);
-    if(metrics.width > maxWidth && n>0){
-      ctx.fillText(line, x, currentY);
-      line = words[n] + ' ';
-      currentY += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  ctx.fillText(line, x, currentY);
-}
-
-// escape html
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
-
-function resetForAnother(){ localStorage.setItem('vibeMachine_revealed', (new Date()).toISOString()); alert('Thanks — one reveal per device is enforced. If someone wants another, try a different device!'); }
-
-// initial
-showIntro();
 </script>
+
 </body>
 </html>
