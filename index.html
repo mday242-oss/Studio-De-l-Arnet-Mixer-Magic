@@ -74,8 +74,8 @@
 </div>
 
 <div id="step1">
-  <button class="fortune-btn" onclick="chooseMode('fortune')">Give Me My 2026 Fortune 🔮</button>
-  <button class="song-btn" onclick="chooseMode('song')">Give Me My 2026 Theme Song 🎵</button>
+  <button id="fortuneBtn" class="fortune-btn">Give Me My 2026 Fortune 🔮</button>
+  <button id="songBtn" class="song-btn">Give Me My 2026 Theme Song 🎵</button>
 </div>
 
 <div id="step2" class="hidden">
@@ -86,14 +86,23 @@
 <div id="step3" class="hidden">
   <div class="result-card" id="resultCard"></div>
   <div id="extras" class="hidden">
-    <button id="spotifyBtn" class="song-btn hidden" onclick="saveToSpotify()">Save to Spotify 🎵</button>
-    <button id="downloadBtn" class="fortune-btn hidden" onclick="downloadFortune()">Download Magic 8 Ball 🔮</button>
-    <button id="shareBtn" class="vibe-btn" onclick="sharePolaroid()">Share Your Vibe Card 📸</button>
+    <button id="spotifyBtn" class="song-btn hidden">Save to Spotify 🎵</button>
+    <button id="downloadBtn" class="fortune-btn hidden">Download Magic 8 Ball 🔮</button>
+    <button id="shareBtn" class="vibe-btn">Share Your Vibe Card 📸</button>
   </div>
   <canvas id="shareCard" class="hidden"></canvas>
 </div>
 
 <script>
+// Attach button handlers after DOM loads
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('fortuneBtn').addEventListener('click', ()=>chooseMode('fortune'));
+  document.getElementById('songBtn').addEventListener('click', ()=>chooseMode('song'));
+  document.getElementById('shareBtn').addEventListener('click', sharePolaroid);
+  document.getElementById('spotifyBtn').addEventListener('click', saveToSpotify);
+  document.getElementById('downloadBtn').addEventListener('click', downloadFortune);
+});
+
 // Sparkle animation for homepage
 const canvasH=document.getElementById('sparkleCanvas');
 const ctxH=canvasH.getContext('2d');
@@ -201,14 +210,13 @@ function downloadFortune(){
   link.href=canvas.toDataURL(); link.click();
 }
 
-// Upgraded Polaroid card
+// Polaroid card
 function sharePolaroid(){
   const canvas=document.getElementById('shareCard');
   canvas.classList.remove('hidden');
   const ctx=canvas.getContext('2d');
   canvas.width=400; canvas.height=500;
 
-  // Background gradient by vibe
   let gradient=ctx.createLinearGradient(0,0,0,canvas.height);
   switch(lastVibe){
     case "Playful": gradient.addColorStop(0,"#ff9a9e"); gradient.addColorStop(1,"#fad0c4"); break;
@@ -223,12 +231,10 @@ function sharePolaroid(){
   ctx.fillStyle=gradient;
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  // Polaroid frame
   ctx.strokeStyle="#fff"; ctx.lineWidth=10;
   ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
   ctx.fillStyle="#fff"; ctx.fillRect(10,canvas.height-60,canvas.width-20,50);
 
-  // Sparkles
   for(let i=0;i<40;i++){
     ctx.fillStyle="#fff"; 
     const x=Math.random()*canvas.width;
@@ -237,20 +243,16 @@ function sharePolaroid(){
     ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
   }
 
-  // Header
   ctx.fillStyle="#fff"; ctx.font="bold 22px Arial"; ctx.textAlign="center";
   ctx.fillText(mode==='fortune'?"🔮 Your 2026 Fortune":"🎵 Your 2026 Theme Song",canvas.width/2,50);
 
-  // Vibe emoji
   const vibeIcons={Playful:"✨🎉",Fierce:"🔥💪",Mysterious:"🌙🔮",Creative:"🎨🎶",Chaos:"🤡🎲",Grounded:"🧘🍃",Wildcard:"🎲🌟"};
   const emoji=vibeIcons[lastVibe]||"🎲";
   ctx.fillText(emoji,canvas.width/2,80);
 
-  // Main text
   ctx.fillStyle="#000"; ctx.font="18px Arial";
   wrapText(ctx,lastResult,30,130,canvas.width-60,24);
 
-  // Footer branding
   ctx.fillStyle="#000"; ctx.font="14px Arial";
   ctx.fillText("Studio De l’Arnet ✨ @studio.del.arnet",canvas.width/2,canvas.height-35);
 }
