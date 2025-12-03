@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Studio Mixer Magic</title>
+<title>Studio De l'Arnet Mixer Magic</title>
 <style>
   body {
     font-family: 'Arial', sans-serif;
@@ -13,8 +13,8 @@
     text-align:center;
     overflow-x:hidden;
   }
-  h1 { font-size:2.5rem; margin-top:2rem; text-shadow:2px 2px 5px #000; }
-  h2 { margin-top:1.5rem; }
+  h1 { font-size:2.5rem; margin-top:1rem; text-shadow:2px 2px 5px #000; }
+  h2 { margin-top:1rem; }
 
   button {
     font-size:1.3rem;
@@ -50,24 +50,28 @@
     display:block;
     box-shadow:0 4px 20px rgba(0,0,0,0.6);
   }
-
-  @keyframes twinkle {
-    0%,100%{opacity:1;}
-    50%{opacity:0.3;}
-  }
-  .sparkle {
-    position:absolute;
-    width:4px;height:4px;
-    background:#fff;
-    border-radius:50%;
-    animation:twinkle 2s infinite;
-  }
 </style>
 </head>
 <body>
 
-<h1>Studio Mixer Magic ✨🎧</h1>
+<h1>Studio De l'Arnet Mixer Magic ✨🎧</h1>
 <p style="font-size:1.2rem;">Your vibe, your fortune, your theme song for 2026!</p>
+
+<!-- Disco homepage preview -->
+<div id="homepage" style="position:relative; width:100%; height:250px; overflow:hidden; margin-bottom:2rem;">
+  <canvas id="sparkleCanvas" width="400" height="250" style="width:100%; height:250px;"></canvas>
+
+  <!-- Floating Polaroid previews -->
+  <div style="position:absolute; top:20px; left:10px; transform:rotate(-10deg);">
+    <div style="width:80px;height:100px;background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.5);"></div>
+  </div>
+  <div style="position:absolute; top:50px; left:120px; transform:rotate(5deg);">
+    <div style="width:80px;height:100px;background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.5);"></div>
+  </div>
+  <div style="position:absolute; top:30px; left:230px; transform:rotate(-5deg);">
+    <div style="width:80px;height:100px;background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.5);"></div>
+  </div>
+</div>
 
 <div id="step1">
   <button class="fortune-btn" onclick="chooseMode('fortune')">Give Me My 2026 Fortune 🔮</button>
@@ -89,21 +93,27 @@
   <canvas id="shareCard" class="hidden"></canvas>
 </div>
 
-<!-- Sparkles -->
 <script>
+// Sparkle animation for homepage
+const canvasH=document.getElementById('sparkleCanvas');
+const ctxH=canvasH.getContext('2d');
+const sparkles=[];
 for(let i=0;i<50;i++){
-  let sparkle=document.createElement('div');
-  sparkle.className='sparkle';
-  sparkle.style.top=Math.random()*100+'%';
-  sparkle.style.left=Math.random()*100+'%';
-  sparkle.style.width=2+Math.random()*4+'px';
-  sparkle.style.height=2+Math.random()*4+'px';
-  sparkle.style.animationDuration=1+Math.random()*3+'s';
-  document.body.appendChild(sparkle);
+  sparkles.push({x:Math.random()*canvasH.width,y:Math.random()*canvasH.height,r:1+Math.random()*2,d:Math.random()*0.02});
 }
-</script>
+function drawSparkles(){
+  ctxH.clearRect(0,0,canvasH.width,canvasH.height);
+  sparkles.forEach(s=>{
+    ctxH.beginPath();
+    ctxH.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctxH.fillStyle="#fff";
+    ctxH.globalAlpha=0.5+0.5*Math.sin(s.d*Date.now());
+    ctxH.fill();
+  });
+  requestAnimationFrame(drawSparkles);
+}
+drawSparkles();
 
-<script>
 // DATA
 const vibes = [
   {name:"Playful",emoji:"✨"},
@@ -137,7 +147,6 @@ const songs={
 
 let mode="", lastResult="", lastVibe="";
 
-// FLOW
 function chooseMode(selectedMode){
   mode=selectedMode;
   document.getElementById('step1').classList.add('hidden');
@@ -178,7 +187,7 @@ function revealResult(vibe){
   }
 }
 
-// EXTRAS
+// Extras
 function saveToSpotify(){ window.open(`https://open.spotify.com/search/${encodeURIComponent(lastResult)}`,"_blank"); }
 
 function downloadFortune(){
@@ -192,19 +201,14 @@ function downloadFortune(){
   link.href=canvas.toDataURL(); link.click();
 }
 
-// OLD CODE — DELETE THIS ENTIRE FUNCTION
-function sharePolaroid(){
-  // ...old plain gradient code
-}
-
-// NEW CODE — PASTE THE UPGRADED VERSION HERE
+// Upgraded Polaroid card
 function sharePolaroid(){
   const canvas=document.getElementById('shareCard');
   canvas.classList.remove('hidden');
   const ctx=canvas.getContext('2d');
   canvas.width=400; canvas.height=500;
 
-  // --- Background based on vibe ---
+  // Background gradient by vibe
   let gradient=ctx.createLinearGradient(0,0,0,canvas.height);
   switch(lastVibe){
     case "Playful": gradient.addColorStop(0,"#ff9a9e"); gradient.addColorStop(1,"#fad0c4"); break;
@@ -219,66 +223,18 @@ function sharePolaroid(){
   ctx.fillStyle=gradient;
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  // --- Polaroid frame ---
+  // Polaroid frame
   ctx.strokeStyle="#fff"; ctx.lineWidth=10;
   ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
   ctx.fillStyle="#fff"; ctx.fillRect(10,canvas.height-60,canvas.width-20,50);
 
-  // --- Sparkles ---
+  // Sparkles
   for(let i=0;i<40;i++){
     ctx.fillStyle="#fff"; 
     const x=Math.random()*canvas.width;
     const y=Math.random()*canvas.height;
     const size=1+Math.random()*3;
     ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
-  }
-
-  // --- Header ---
-  ctx.fillStyle="#fff"; ctx.font="bold 22px Arial"; ctx.textAlign="center";
-  ctx.fillText(mode==='fortune'?"🔮 Your 2026 Fortune":"🎵 Your 2026 Theme Song",canvas.width/2,50);
-
-  // --- Vibe emoji ---
-  const vibeIcons={Playful:"✨🎉",Fierce:"🔥💪",Mysterious:"🌙🔮",Creative:"🎨🎶",Chaos:"🤡🎲",Grounded:"🧘🍃",Wildcard:"🎲🌟"};
-  const emoji=vibeIcons[lastVibe]||"🎲";
-  ctx.fillText(emoji,canvas.width/2,80);
-
-  // --- Main text ---
-  ctx.fillStyle="#000"; ctx.font="18px Arial";
-  wrapText(ctx,lastResult,30,130,canvas.width-60,24);
-
-  // --- Footer branding ---
-  ctx.fillStyle="#000"; ctx.font="14px Arial";
-  ctx.fillText("Studio de l’Arnet ✨ @studio.del.arnet",canvas.width/2,canvas.height-35);
-}
-
-// --- Wrap text helper remains unchanged ---
-function wrapText(ctx,text,x,y,maxWidth,lineHeight){
-  const words=text.split(' '); let line='';
-  for(let n=0;n<words.length;n++){
-    const testLine=line+words[n]+' ';
-    const metrics=ctx.measureText(testLine);
-    const testWidth=metrics.width;
-    if(testWidth>maxWidth && n>0){
-      ctx.fillText(line,x+maxWidth/2,y);
-      line=words[n]+' '; y+=lineHeight;
-    }else{ line=testLine; }
-  }
-  ctx.fillText(line,x+maxWidth/2,y);
-}
-
-
-  // Gradient background
-  const gradient=ctx.createLinearGradient(0,0,0,canvas.height);
-  gradient.addColorStop(0,"#8e2de2"); gradient.addColorStop(0.5,"#ff416c"); gradient.addColorStop(1,"#ffda61");
-  ctx.fillStyle=gradient; ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // Polaroid border
-  ctx.strokeStyle="#fff"; ctx.lineWidth=10; ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
-
-  // Sparkles
-  for(let i=0;i<30;i++){
-    ctx.fillStyle="#fff"; const x=Math.random()*canvas.width; const y=Math.random()*canvas.height;
-    const size=2+Math.random()*3; ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
   }
 
   // Header
@@ -291,18 +247,24 @@ function wrapText(ctx,text,x,y,maxWidth,lineHeight){
   ctx.fillText(emoji,canvas.width/2,80);
 
   // Main text
-  ctx.fillStyle="#fff"; ctx.font="18px Arial"; wrapText(ctx,lastResult,30,130,canvas.width-60,24);
+  ctx.fillStyle="#000"; ctx.font="18px Arial";
+  wrapText(ctx,lastResult,30,130,canvas.width-60,24);
 
-  // Footer
-  ctx.font="12px Arial"; ctx.fillStyle="#fff"; ctx.fillText("Studio Mixer Magic 2026",canvas.width/2,canvas.height-30);
+  // Footer branding
+  ctx.fillStyle="#000"; ctx.font="14px Arial";
+  ctx.fillText("Studio De l’Arnet ✨ @studio.del.arnet",canvas.width/2,canvas.height-35);
 }
 
-// Wrap text helper
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){
   const words=text.split(' '); let line='';
   for(let n=0;n<words.length;n++){
-    const testLine=line+words[n]+' '; const metrics=ctx.measureText(testLine); const testWidth=metrics.width;
-    if(testWidth>maxWidth && n>0){ ctx.fillText(line,x+maxWidth/2,y); line=words[n]+' '; y+=lineHeight; } else{ line=testLine; }
+    const testLine=line+words[n]+' ';
+    const metrics=ctx.measureText(testLine);
+    const testWidth=metrics.width;
+    if(testWidth>maxWidth && n>0){
+      ctx.fillText(line,x+maxWidth/2,y);
+      line=words[n]+' '; y+=lineHeight;
+    }else{ line=testLine; }
   }
   ctx.fillText(line,x+maxWidth/2,y);
 }
