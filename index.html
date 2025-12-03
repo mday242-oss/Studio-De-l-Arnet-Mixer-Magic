@@ -192,9 +192,80 @@ function downloadFortune(){
   link.href=canvas.toDataURL(); link.click();
 }
 
+// OLD CODE — DELETE THIS ENTIRE FUNCTION
 function sharePolaroid(){
-  const canvas=document.getElementById('shareCard'); canvas.classList.remove('hidden');
-  const ctx=canvas.getContext('2d'); canvas.width=400; canvas.height=500;
+  // ...old plain gradient code
+}
+
+// NEW CODE — PASTE THE UPGRADED VERSION HERE
+function sharePolaroid(){
+  const canvas=document.getElementById('shareCard');
+  canvas.classList.remove('hidden');
+  const ctx=canvas.getContext('2d');
+  canvas.width=400; canvas.height=500;
+
+  // --- Background based on vibe ---
+  let gradient=ctx.createLinearGradient(0,0,0,canvas.height);
+  switch(lastVibe){
+    case "Playful": gradient.addColorStop(0,"#ff9a9e"); gradient.addColorStop(1,"#fad0c4"); break;
+    case "Fierce": gradient.addColorStop(0,"#ff416c"); gradient.addColorStop(1,"#ff4b2b"); break;
+    case "Mysterious": gradient.addColorStop(0,"#2c3e50"); gradient.addColorStop(1,"#4ca1af"); break;
+    case "Creative": gradient.addColorStop(0,"#43cea2"); gradient.addColorStop(1,"#185a9d"); break;
+    case "Chaos": gradient.addColorStop(0,"#f7971e"); gradient.addColorStop(1,"#ffd200"); break;
+    case "Grounded": gradient.addColorStop(0,"#00c6ff"); gradient.addColorStop(1,"#0072ff"); break;
+    case "Wildcard": gradient.addColorStop(0,"#fbc2eb"); gradient.addColorStop(1,"#a6c1ee"); break;
+    default: gradient.addColorStop(0,"#8e2de2"); gradient.addColorStop(1,"#ff416c");
+  }
+  ctx.fillStyle=gradient;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // --- Polaroid frame ---
+  ctx.strokeStyle="#fff"; ctx.lineWidth=10;
+  ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
+  ctx.fillStyle="#fff"; ctx.fillRect(10,canvas.height-60,canvas.width-20,50);
+
+  // --- Sparkles ---
+  for(let i=0;i<40;i++){
+    ctx.fillStyle="#fff"; 
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height;
+    const size=1+Math.random()*3;
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+  }
+
+  // --- Header ---
+  ctx.fillStyle="#fff"; ctx.font="bold 22px Arial"; ctx.textAlign="center";
+  ctx.fillText(mode==='fortune'?"🔮 Your 2026 Fortune":"🎵 Your 2026 Theme Song",canvas.width/2,50);
+
+  // --- Vibe emoji ---
+  const vibeIcons={Playful:"✨🎉",Fierce:"🔥💪",Mysterious:"🌙🔮",Creative:"🎨🎶",Chaos:"🤡🎲",Grounded:"🧘🍃",Wildcard:"🎲🌟"};
+  const emoji=vibeIcons[lastVibe]||"🎲";
+  ctx.fillText(emoji,canvas.width/2,80);
+
+  // --- Main text ---
+  ctx.fillStyle="#000"; ctx.font="18px Arial";
+  wrapText(ctx,lastResult,30,130,canvas.width-60,24);
+
+  // --- Footer branding ---
+  ctx.fillStyle="#000"; ctx.font="14px Arial";
+  ctx.fillText("Studio de l’Arnet ✨ @studio.del.arnet",canvas.width/2,canvas.height-35);
+}
+
+// --- Wrap text helper remains unchanged ---
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+  const words=text.split(' '); let line='';
+  for(let n=0;n<words.length;n++){
+    const testLine=line+words[n]+' ';
+    const metrics=ctx.measureText(testLine);
+    const testWidth=metrics.width;
+    if(testWidth>maxWidth && n>0){
+      ctx.fillText(line,x+maxWidth/2,y);
+      line=words[n]+' '; y+=lineHeight;
+    }else{ line=testLine; }
+  }
+  ctx.fillText(line,x+maxWidth/2,y);
+}
+
 
   // Gradient background
   const gradient=ctx.createLinearGradient(0,0,0,canvas.height);
