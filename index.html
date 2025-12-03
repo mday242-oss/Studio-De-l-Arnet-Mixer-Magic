@@ -87,7 +87,6 @@
   <div class="result-card" id="resultCard"></div>
   <div id="extras" class="hidden">
     <button id="spotifyBtn" class="song-btn hidden">Save to Spotify 🎵</button>
-    <button id="downloadBtn" class="fortune-btn hidden">Download Magic 8 Ball 🔮</button>
     <button id="shareBtn" class="vibe-btn">Share Your Vibe Card 📸</button>
   </div>
   <canvas id="shareCard" class="hidden"></canvas>
@@ -100,7 +99,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('songBtn').addEventListener('click', ()=>chooseMode('song'));
   document.getElementById('shareBtn').addEventListener('click', sharePolaroid);
   document.getElementById('spotifyBtn').addEventListener('click', saveToSpotify);
-  document.getElementById('downloadBtn').addEventListener('click', downloadFortune);
 });
 
 // Sparkle animation for homepage
@@ -184,7 +182,6 @@ function revealResult(vibe){
     const randomFortune=fortuneList[Math.floor(Math.random()*fortuneList.length)];
     lastResult=randomFortune;
     resultDiv.innerHTML=`<h2>🔮 Your 2026 Fortune</h2><p>${randomFortune}</p>`;
-    document.getElementById('downloadBtn').classList.remove('hidden');
     document.getElementById('spotifyBtn').classList.add('hidden');
   }else{
     const songList=songs[vibe];
@@ -192,22 +189,65 @@ function revealResult(vibe){
     lastResult=randomSong;
     resultDiv.innerHTML=`<h2>🎵 Your 2026 Theme Song</h2><p>${randomSong}</p>`;
     document.getElementById('spotifyBtn').classList.remove('hidden');
-    document.getElementById('downloadBtn').classList.add('hidden');
   }
+  launchConfetti();
 }
 
 // Extras
 function saveToSpotify(){ window.open(`https://open.spotify.com/search/${encodeURIComponent(lastResult)}`,"_blank"); }
 
-function downloadFortune(){
-  const canvas=document.createElement('canvas'); canvas.width=400; canvas.height=200;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle="#162447"; ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="#FFD700"; ctx.font="20px Arial";
-  ctx.fillText("🔮 Your 2026 Fortune",50,50);
-  ctx.fillText(lastResult,20,100,360);
-  const link=document.createElement('a'); link.download="magic8ball_fortune.png";
-  link.href=canvas.toDataURL(); link.click();
+// Confetti animation
+function launchConfetti() {
+  const duration = 2 * 1000;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    const colors = ['#ff0a54','#ff477e','#ff85a1','#fbb1b1','#f9bec7','#f0f0f0'];
+    const confettiCanvas = document.createElement('canvas');
+    confettiCanvas.style.position = 'fixed';
+    confettiCanvas.style.top = 0;
+    confettiCanvas.style.left = 0;
+    confettiCanvas.style.width = '100%';
+    confettiCanvas.style.height = '100%';
+    confettiCanvas.style.pointerEvents = 'none';
+    document.body.appendChild(confettiCanvas);
+    const ctx = confettiCanvas.getContext('2d');
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+
+    const confettis = [];
+    for(let i=0;i<150;i++){
+      confettis.push({
+        x: Math.random()*window.innerWidth,
+        y: Math.random()*window.innerHeight - window.innerHeight,
+        r: 2+Math.random()*4,
+        d: Math.random()*100,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        tilt: Math.floor(Math.random()*10)-10
+      });
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+      confettis.forEach(c=>{
+        ctx.beginPath();
+        ctx.moveTo(c.x+c.tilt,c.y);
+        ctx.lineTo(c.x,c.y+c.r);
+        ctx.strokeStyle=c.color;
+        ctx.lineWidth=c.r;
+        ctx.stroke();
+        c.y += 3;
+        c.tilt += 0.1;
+        if(c.y > confettiCanvas.height) c.y = -10;
+      });
+      if(Date.now() < end){
+        requestAnimationFrame(draw);
+      } else {
+        document.body.removeChild(confettiCanvas);
+      }
+    }
+    draw();
+  })();
 }
 
 // Polaroid card
