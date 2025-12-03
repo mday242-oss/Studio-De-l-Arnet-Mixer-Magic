@@ -1,17 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Studio Vibe Machine</title>
-<style>
-body { font-family: Arial, sans-serif; background:#111; color:#fff; text-align:center; padding:40px;}
-button { padding:15px 25px; margin:10px; font-size:18px; border-radius:10px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio De l'Arnet Mixer Magic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: #fff;
+            text-align: center;
+            padding: 40px;
+        }
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        .button {
+            background: #ff6f61;
+            padding: 15px 30px;
+            border: none;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 25px;
+        }
+        #resultBox {
+            margin-top: 40px;
+            background: #222;
+            padding: 25px;
+            border-radius: 12px;
+            display: none;
+        }
+        .label {
+            font-weight: bold;
+            color: #ffd54f;
+        }
+    </style>
 </head>
 <body>
-<h1>Studio Vibe Machine</h1>
-<p>This is a temporary simplified rebuild so you can upload and enable GitHub Pages. I can restore the full disco version next.</p>
-<button onclick="alert('Fortune: Great energy awaits you in 2026!')">Get Fortune</button>
-<button onclick="alert('Song: Le Freak – Chic')">Get Theme Song</button>
+
+    <h1>🎶 Studio Jukebox of Destiny 🎶</h1>
+    <p>Tap below to reveal your **Mixer Magic Profile** — a personalized vibe reading + song of the night.</p>
+
+    <button class="button" onclick="generate()">Reveal My Destiny</button>
+
+    <div id="resultBox">
+        <p><span class="label">Your Vibe:</span> <span id="fortune"></span></p>
+        <p><span class="label">Your Song:</span> <span id="song"></span></p>
+    </div>
+
+    <script>
+        const fortunes = [
+            "🔥 The Creative Flame — unstoppable and magnetic",
+            "🌙 The Night Owl Visionary — quietly powerful",
+            "🌈 The Color Inventor — full-spectrum chaos in the best way",
+            "🎨 The Studio Muse — effortlessly inspiring",
+            "⚡ The Wildcard — unpredictable brilliance incoming",
+            "💎 The Polished Gem — calm, collected, iconic",
+            "🌪 The Whirlwind — energy that rearranges the room",
+            "✨ The Soft Glow — grounding, luminous, unforgettable"
+        ];
+
+        const songs = [
+            "“Levitating” — Dua Lipa",
+            "“Kiss Me More” — Doja Cat",
+            "“The Less I Know the Better” — Tame Impala",
+            "“About Damn Time” — Lizzo",
+            "“Dog Days Are Over” — Florence + the Machine",
+            "“Blinding Lights” — The Weeknd",
+            "“Midnight City” — M83",
+            "“September” — Earth, Wind & Fire"
+        ];
+
+        function randomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generate() {
+            document.getElementById('fortune').innerText = randomItem(fortunes);
+            document.getElementById('song').innerText = randomItem(songs);
+            document.getElementById('resultBox').style.display = 'block';
+        }
+    </script>
+
 </body>
 </html>
