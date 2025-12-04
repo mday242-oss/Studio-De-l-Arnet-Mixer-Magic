@@ -1,554 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Studio De l'Arnet — Mixer Magic</title>
-
-<!-- Google Fonts (vibe-specific) -->
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Cinzel+Decorative:wght@400;700&family=Fredoka+One&family=Lato:wght@400;700&family=Raleway:wght@300;400;700&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio De l'Arnet Mixer Magic</title>
 <style>
-  :root{
-    --bg-deep: #0f0726;
-    --bg-mid: #3b0f8a;
-    --muted: #d9d4e6;
-    --card-glow: 0 10px 40px rgba(115,20,150,0.18);
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto+Mono:wght@700&family=Monoton&display=swap');
 
-  /* Reset + body */
-  html,body{height:100%;margin:0;padding:0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-  body{
-    font-family: "Raleway", "Lato", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    margin:0;padding:14px;
-    background: radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.02), transparent 6%),
-                linear-gradient(135deg, var(--bg-deep), var(--bg-mid));
+  body {
+    margin:0; padding:0;
+    background: linear-gradient(135deg,#1a1a2e,#4b0082);
     color:#fff;
     text-align:center;
-    min-height:100vh;
+    overflow-x:hidden;
+    font-family:'Roboto',sans-serif;
   }
 
-  .wrap{max-width:980px;margin:0 auto;}
-
-  header{padding-top:8px;padding-bottom:6px}
-  h1{margin:0;font-size:2.2rem;letter-spacing:0.6px;text-shadow:0 10px 30px rgba(0,0,0,0.6)}
-  p.lead{margin:8px 0 14px;color:var(--muted);font-size:1rem}
-
-  /* Disco mirrorball */
-  #homepage{position:relative;width:100%;height:260px;border-radius:14px;overflow:hidden;margin:18px 0 20px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.03);
+  h1 {
+    font-size:2.8rem;
+    margin-top:1rem;
+    text-shadow:0 0 15px #fff, 0 0 30px #ff0, 0 0 45px #f0f;
   }
 
-  /* Decorative mirrorball circle */
-  .mirrorball {
-    position:absolute; right:20px; top:20px; width:140px; height:140px;
-    border-radius:50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85), rgba(255,255,255,0.3) 5%, rgba(255,255,255,0.05) 10%, rgba(255,255,255,0.02) 12%),
-    linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.0));
-    box-shadow:0 8px 30px rgba(255,255,255,0.04), inset 0 6px 20px rgba(255,255,255,0.02);
-    transform: rotate(0deg);
-    animation: discoSpin 12s linear infinite;
-    backdrop-filter: blur(2px);
+  h2 { margin-top:1rem; }
+
+  button {
+    font-size:1.3rem;
+    padding:1rem 2rem;
+    margin:0.7rem;
+    cursor:pointer;
+    border-radius:12px;
+    border:none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight:bold;
+  }
+  button:hover { transform:scale(1.05); box-shadow:0 0 15px #fff; }
+
+  .fortune-btn { background:#ff6f61; color:#fff; }
+  .song-btn { background:#ffda61; color:#000; }
+  .vibe-btn { background:#61ffda; color:#000; }
+
+  .hidden { display:none; }
+
+  #vibeButtons button { margin:0.5rem; }
+
+  #shareCard {
+    margin:1rem auto;
+    border-radius:12px;
+    display:block;
+    box-shadow:0 4px 20px rgba(0,0,0,0.6);
   }
 
-  @keyframes discoSpin{ from{ transform: rotate(0deg) } to{ transform: rotate(360deg) } }
+  canvas { display:block; margin:0 auto; }
 
-  /* little pulse glow behind mirrorball */
-  .mirrorball::before{
-    content:""; position:absolute; inset:-40px; border-radius:50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.06), rgba(0,0,0,0));
-    filter: blur(10px);
-    pointer-events:none;
-  }
-
-  /* mini polaroids (decorative) */
-  .mini-polaroid{ position:absolute; left:18px; top:20px; width:86px; height:110px; background:#fff; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.55); transform:rotate(-12deg); }
-  .mini-polaroid.two{ left:120px; top:36px; transform:rotate(6deg); }
-  .mini-polaroid.three{ left:236px; top:12px; transform:rotate(-4deg); }
-
-  /* CTA row */
-  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:4px}
-  .btn{
-    border:0;padding:14px 20px;border-radius:12px;font-weight:800;cursor:pointer;font-size:1.05rem;transition:transform .12s ease, box-shadow .12s ease;
-    letter-spacing:0.4px;
-  }
-  .btn:active{transform:translateY(2px)}
-  .fortune-btn{background: linear-gradient(90deg,#ff7a66,#ff5b8a); color:#fff; box-shadow:0 12px 40px rgba(255,90,120,0.12)}
-  .song-btn{background: linear-gradient(90deg,#ffd76a,#ffd14b); color:#071018; box-shadow:0 12px 40px rgba(255,210,80,0.12)}
-  .vibe-btn{background: rgba(255,255,255,0.04); color:var(--muted); padding:12px 14px; border-radius:12px; font-weight:700; border:1px solid rgba(255,255,255,0.03)}
-
-  /* Step containers */
-  .hidden{display:none}
-  #step2{margin-top:8px}
-  #vibeGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:12px;padding:4px}
-
-  .vibe-card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
-    padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:96px;cursor:pointer;
-    transition:transform .12s ease, box-shadow .12s ease;
-  }
-  .vibe-card:hover{transform:translateY(-8px);box-shadow:var(--card-glow)}
-  .vibe-emoji{font-size:22px}
-  .vibe-label{margin-top:8px;font-weight:800;color:#fff}
-
-  /* result area */
-  .result-card{
-    margin:20px auto;padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));max-width:640px;border:1px solid rgba(255,255,255,0.04);
-  }
-  .result-title{font-weight:900;font-size:1.2rem}
-  .result-text{margin-top:10px;color:var(--muted);line-height:1.45;font-size:1.02rem}
-
-  .extras{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
-
-  /* share card canvas */
-  #shareCard{display:block;margin:18px auto;border-radius:16px;box-shadow:0 14px 50px rgba(0,0,0,0.55);background:#fff}
-
-  footer{margin-top:12px;color:var(--muted);font-size:0.9rem;padding-bottom:30px}
-
-  /* responsive */
-  @media (max-width:560px){
-    h1{font-size:1.5rem}
-    #homepage{height:180px}
-    .mini-polaroid{width:64px;height:86px}
-    .btn{padding:12px 12px;font-size:0.98rem}
-    #vibeGrid{grid-template-columns:repeat(2,1fr)}
-  }
 </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Studio De l'Arnet — Mixer Magic ✨🎧</h1>
-      <p class="lead">Pick Fortune or Theme Song → choose your vibe → reveal a collectible Polaroid card. One reveal per device.</p>
-    </header>
 
-    <!-- Homepage disco area -->
-    <div id="homepage" aria-hidden="true">
-      <canvas id="sparkleCanvas" width="900" height="260" style="width:100%;height:100%;display:block;border-radius:14px"></canvas>
+<h1>Studio De l'Arnet Mixer Magic ✨🎧</h1>
+<p style="font-size:1.2rem;">Your vibe, your fortune, your theme song for 2026!</p>
 
-      <div class="mini-polaroid"></div>
-      <div class="mini-polaroid two"></div>
-      <div class="mini-polaroid three"></div>
+<!-- Homepage Animation -->
+<canvas id="homepageCanvas" width="400" height="250" style="width:100%;height:250px;"></canvas>
 
-      <div class="mirrorball" aria-hidden="true"></div>
-    </div>
+<div id="step1">
+  <button id="fortuneBtn" class="fortune-btn">Give Me My 2026 Fortune 🔮</button>
+  <button id="songBtn" class="song-btn">Give Me My 2026 Theme Song 🎵</button>
+</div>
 
-    <!-- Step 1 -->
-    <div id="step1">
-      <div class="cta-row" role="group" aria-label="Choose mode">
-        <button id="fortuneBtn" class="btn fortune-btn" aria-pressed="false">Give Me My 2026 Fortune 🔮</button>
-        <button id="songBtn" class="btn song-btn" aria-pressed="false">Give Me My 2026 Theme Song 🎵</button>
-      </div>
-    </div>
+<div id="step2" class="hidden">
+  <h2 id="vibePrompt">Pick your vibe</h2>
+  <div id="vibeButtons"></div>
+</div>
 
-    <!-- Step 2: pick vibe -->
-    <div id="step2" class="hidden" aria-live="polite">
-      <h2 id="vibePrompt">Pick your vibe</h2>
-      <div id="vibeGrid" role="list"></div>
-      <div style="margin-top:12px"><button id="backBtn" class="btn vibe-btn">← Back</button></div>
-    </div>
-
-    <!-- Step 3: result -->
-    <div id="step3" class="hidden" aria-live="polite">
-      <div id="resultArea" class="result-card" role="status">
-        <div id="resultTitle" class="result-title"></div>
-        <div id="resultText" class="result-text"></div>
-      </div>
-
-      <div id="extras" class="extras hidden">
-        <button id="spotifyBtn" class="btn song-btn hidden">Save to Spotify 🎵</button>
-        <button id="shareBtn" class="btn vibe-btn">Share Your Vibe Card 📸</button>
-      </div>
-
-      <canvas id="shareCard" class="hidden" width="1200" height="1500" aria-hidden="true"></canvas>
-    </div>
-
-    <footer>Studio De l'Arnet • @studio.del.arnet</footer>
+<div id="step3" class="hidden">
+  <div class="result-card" id="resultCard"></div>
+  <div id="extras" class="hidden">
+    <button id="spotifyBtn" class="song-btn hidden">Save to Spotify 🎵</button>
+    <button id="shareBtn" class="vibe-btn">Share Your Vibe Card 📸</button>
   </div>
+  <canvas id="shareCard" class="hidden"></canvas>
+</div>
 
-  <!-- Next: JavaScript (I'll send message 2 with the full script) -->
-
-  <script>
-/* ---------- VIBE + DATA (must match Message 1 fonts & emojis) ---------- */
+<script>
+// ---- DATA ----
 const vibes = [
-  { key: "Playful", label: "Playful", emoji: "✨", font: "Fredoka One, cursive", gradient: ["#ff9a9e","#fad0c4"] },
-  { key: "Fierce",  label: "Fierce",  emoji: "🔥", font: "Anton, sans-serif", gradient: ["#ff416c","#ff4b2b"] },
-  { key: "Mysterious", label: "Mysterious", emoji: "🔮", font: "Cinzel Decorative, serif", gradient: ["#2c3e50","#4ca1af"] },
-  { key: "Creative", label: "Creative", emoji: "🎨", font: "Raleway, sans-serif", gradient: ["#43cea2","#185a9d"] },
-  { key: "Chaos", label: "Chaos", emoji: "🤡", font: "Rubik, sans-serif", gradient: ["#f7971e","#ffd200"] },
-  { key: "Grounded", label: "Grounded", emoji: "🧘", font: "Lato, sans-serif", gradient: ["#00c6ff","#0072ff"] },
-  { key: "Wildcard", label: "Wildcard", emoji: "🎲", font: "Bungee, display", gradient: ["#fbc2eb","#a6c1ee"] }
+  {name:"Playful",emoji:"✨",font:"Pacifico",frame:"#ff9a9e,#fad0c4"},
+  {name:"Fierce",emoji:"🔥",font:"Roboto Mono",frame:"#ff416c,#ff4b2b"},
+  {name:"Mysterious",emoji:"🔮",font:"Monoton",frame:"#2c3e50,#4ca1af"},
+  {name:"Creative",emoji:"🎨",font:"Pacifico",frame:"#43cea2,#185a9d"},
+  {name:"Chaos",emoji:"🤡",font:"Monoton",frame:"#f7971e,#ffd200"},
+  {name:"Grounded",emoji:"🧘",font:"Roboto Mono",frame:"#00c6ff,#0072ff"},
+  {name:"Wildcard",emoji:"🎲",font:"Pacifico",frame:"#fbc2eb,#a6c1ee"}
 ];
 
-/* --- fortunes & songs (ready-to-go; expand as you like) --- */
-const fortunes = {
-  Playful: ["Your laughter is your superpower; use it liberally this year.","Unexpected joy will find you in the most curious places.","A playful impulse becomes the bridge to someone who shares your odd sense of humor."],
-  Fierce: ["2026 is your year to roar; your boldness opens doors.","Confidence becomes practical power—speak the plan and schedule the steps.","A leadership opportunity appears disguised as a small ask; accept it."],
-  Mysterious: ["A quiet intuition blooms into a helpful guide; listen to small, repeated nudges.","You will notice a pattern no one else has named — use that insight.","A subtle shift reveals new creative space; rearrange one thing and watch the rest breathe easier."],
-  Creative: ["A new idea grows when you let two unexpected things collide.","Your imagination is a magnet for exciting opportunities.","A creative routine that rewards consistency appears—protect that time."],
-  Chaos: ["A delightful disruption shifts your routine; lean into the mess and find the emergent opportunity.","A wild idea asks for a test—try a tiny pilot and enjoy what you learn.","Your willingness to take creative risks will magnetize others—chaos with heart builds community."],
-  Grounded: ["A steady habit anchors an unpredictable week; build one slow ritual and guard it.","Financial steadiness appears when you make small, repeatable choices.","A simple daily practice brings surprising joy and becomes a soft daily gift."],
-  Wildcard: ["Something delightful and unusual will brighten your day.","Expect the unexpected and relish it.","A surprising detour becomes a favorite story—collect the good bits."]
+const fortunes={
+  Playful:["Your laughter is your superpower; use it liberally this year.","Unexpected joy will find you in the most curious places."],
+  Fierce:["2026 is your year to roar; your boldness opens doors.","Strength comes from confidence—own every step forward."],
+  Mysterious:["Secrets you uncover will spark your creativity.","Embrace the unknown; it holds your next big adventure."],
+  Creative:["Your imagination is a magnet for exciting opportunities.","Inspiration strikes when you least expect it—stay ready."],
+  Chaos:["A little chaos brings colorful surprises your way.","Trust the whirlwind; it leads to unexpected brilliance."],
+  Grounded:["Your calm presence stabilizes those around you.","Focus and patience unlock rewards this year."],
+  Wildcard:["Something delightful and unusual will brighten your day.","Expect the unexpected and relish it."]
 };
 
-const songs = {
-  Playful: ["Good Times - Chic","Walking on Sunshine - Katrina & The Waves","September - Earth, Wind & Fire"],
-  Fierce: ["Eye of the Tiger - Survivor","Respect - Aretha Franklin","Barracuda - Heart"],
-  Mysterious: ["Dreams - Fleetwood Mac","Riders on the Storm - The Doors","Black Magic Woman - Santana"],
-  Creative: ["Bohemian Rhapsody - Queen","Life on Mars? - David Bowie","Superstition - Stevie Wonder"],
-  Chaos: ["Sabotage - Beastie Boys","Shake It Out - Florence + The Machine","Crosstown Traffic - Jimi Hendrix"],
-  Grounded: ["Lovely Day - Bill Withers","Here Comes The Sun - The Beatles","Lean on Me - Bill Withers"],
-  Wildcard: ["Space Oddity - David Bowie","Starman - David Bowie","Magic Carpet Ride - Steppenwolf"]
+const songs={
+  Playful:["Good Times - Chic","Walking on Sunshine - Katrina & The Waves","September - Earth, Wind & Fire"],
+  Fierce:["Eye of the Tiger - Survivor","Respect - Aretha Franklin","Barracuda - Heart"],
+  Mysterious:["Dreams - Fleetwood Mac","Riders on the Storm - The Doors","Black Magic Woman - Santana"],
+  Creative:["Bohemian Rhapsody - Queen","Life on Mars? - David Bowie","Superstition - Stevie Wonder"],
+  Chaos:["Sabotage - Beastie Boys","Shake It Out - Florence + The Machine","Crosstown Traffic - Jimi Hendrix"],
+  Grounded:["Lovely Day - Bill Withers","Here Comes The Sun - The Beatles","Lean on Me - Bill Withers"],
+  Wildcard:["Space Oddity - David Bowie","Starman - David Bowie","Magic Carpet Ride - Steppenwolf"]
 };
 
-/* ---------- UI elements ---------- */
-const step1 = document.getElementById('step1');
-const step2 = document.getElementById('step2');
-const step3 = document.getElementById('step3');
-const vibeGrid = document.getElementById('vibeGrid');
-const backBtn = document.getElementById('backBtn');
-const resultTitle = document.getElementById('resultTitle');
-const resultText  = document.getElementById('resultText');
-const extrasRow = document.getElementById('extras');
-const spotifyBtn = document.getElementById('spotifyBtn');
-const shareBtn = document.getElementById('shareBtn');
-const shareCanvas = document.getElementById('shareCard');
-const sparkleCanvas = document.getElementById('sparkleCanvas');
+// ---- STATE ----
+let mode="", lastResult="", lastVibe="";
 
-let mode = null;
-let chosenVibe = null;
-let chosenText = null;
+// ---- ELEMENTS ----
+const step1=document.getElementById('step1');
+const step2=document.getElementById('step2');
+const step3=document.getElementById('step3');
+const vibeButtonsDiv=document.getElementById('vibeButtons');
+const resultDiv=document.getElementById('resultCard');
+const extrasDiv=document.getElementById('extras');
+const shareCanvas=document.getElementById('shareCard');
+const spotifyBtn=document.getElementById('spotifyBtn');
 
-const REVEAL_KEY = 'studio_vibe_revealed';
+// ---- EVENTS ----
+document.getElementById('fortuneBtn').addEventListener('click',()=>chooseMode('fortune'));
+document.getElementById('songBtn').addEventListener('click',()=>chooseMode('song'));
+document.getElementById('shareBtn').addEventListener('click',sharePolaroid);
+spotifyBtn.addEventListener('click',saveToSpotify);
 
-/* ---------- helper functions ---------- */
-function show(el){ el.classList.remove('hidden'); }
-function hide(el){ el.classList.add('hidden'); }
-function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-
-/* ---------- render vibe grid (uses correct emojis) ---------- */
-function renderVibes(){
-  vibeGrid.innerHTML = '';
+function chooseMode(selected){
+  mode=selected;
+  step1.classList.add('hidden');
+  step2.classList.remove('hidden');
+  vibeButtonsDiv.innerHTML="";
   vibes.forEach(v=>{
-    const card = document.createElement('div');
-    card.className = 'vibe-card';
-    card.setAttribute('role','listitem');
-    card.innerHTML = `<div class="vibe-emoji">${v.emoji}</div><div class="vibe-label">${v.label}</div>`;
-    card.addEventListener('click', ()=> onVibeClick(v.key));
-    vibeGrid.appendChild(card);
+    const btn=document.createElement('button');
+    btn.className='vibe-btn';
+    btn.textContent=`${v.emoji} ${v.name}`;
+    btn.style.fontFamily=v.font;
+    btn.onclick=()=>revealResult(v);
+    vibeButtonsDiv.appendChild(btn);
   });
+  document.getElementById('vibePrompt').textContent=
+    mode==='fortune'?"Pick your vibe for a Fortune 🔮":"Pick your vibe for a Theme Song 🎵";
 }
 
-/* ---------- start mode (fortune or song) ---------- */
+function revealResult(vibeObj){
+  lastVibe=vibeObj.name;
+  step2.classList.add('hidden');
+  step3.classList.remove('hidden');
+  extrasDiv.classList.remove('hidden');
 
-  mode = selected;
-  hide(step1);
-  renderVibes();
-  show(step2);
-  document.getElementById('vibePrompt').textContent = mode === 'fortune' ? "Pick your vibe for a Fortune 🔮" : "Pick your vibe for a Theme Song 🎵";
-}
-
-/* ---------- back button configured in DOMContentLoaded below ---------- */
-
-/* ---------- when a vibe is selected ---------- */
-function onVibeClick(vibeKey){
-  chosenVibe = vibeKey;
-  const vibeMeta = vibes.find(v=>v.key === vibeKey);
-  if(mode === 'fortune'){
-    const list = fortunes[vibeKey] || fortunes.Wildcard;
-    chosenText = rand(list);
-    resultTitle.innerText = "🔮 Your 2026 Fortune";
-    resultText.innerText = chosenText;
-    hide(spotifyBtn);
+  if(mode==='fortune'){
+    const list=fortunes[vibeObj.name];
+    lastResult=list[Math.floor(Math.random()*list.length)];
+    resultDiv.innerHTML=`<h2 style="font-family:${vibeObj.font}">🔮 Your 2026 Fortune</h2><p style="font-family:${vibeObj.font}">${lastResult}</p>`;
+    spotifyBtn.classList.add('hidden');
   } else {
-    const list = songs[vibeKey] || songs.Wildcard;
-    chosenText = rand(list);
-    resultTitle.innerText = "🎵 Your 2026 Theme Song";
-    resultText.innerText = chosenText;
-    show(spotifyBtn);
+    const list=songs[vibeObj.name];
+    lastResult=list[Math.floor(Math.random()*list.length)];
+    resultDiv.innerHTML=`<h2 style="font-family:${vibeObj.font}">🎵 Your 2026 Theme Song</h2><p style="font-family:${vibeObj.font}">${lastResult}</p>`;
+    spotifyBtn.classList.remove('hidden');
   }
-
-  // Apply vibe font to on-screen result (both title & text)
-  applyVibeFontToResult(vibeKey);
-
-  hide(step2);
-  show(step3);
-  show(extrasRow);
-
-  // mark revealed
-  localStorage.setItem(REVEAL_KEY, new Date().toISOString());
-
-  // confetti burst
   launchConfetti();
 }
 
-/* ---------- apply vibe font to on-screen result ---------- */
-function applyVibeFontToResult(vibeKey){
-  const vibeMeta = vibes.find(v=>v.key === vibeKey) || vibes[0];
-  // set CSS font-family directly
-  resultTitle.style.fontFamily = vibeMeta.font;
-  resultText.style.fontFamily = vibeMeta.font;
-  // small sizing tweaks
-  resultTitle.style.fontWeight = 700;
-  resultText.style.fontSize = '1rem';
-}
+// ---- SPOTIFY ----
+function saveToSpotify(){ window.open(`https://open.spotify.com/search/${encodeURIComponent(lastResult)}`,"_blank"); }
 
-/* ---------- Spotify search ---------- */
-spotifyBtn.addEventListener('click', ()=>{
-  if(!chosenText) return;
-  const q = encodeURIComponent(chosenText);
-  window.open(`https://open.spotify.com/search/${q}`,'_blank');
-});
-
-/* ---------- Confetti animation ---------- */
+// ---- CONFETTI ----
 function launchConfetti(){
-  const duration = 1600; const end = Date.now() + duration;
-  const colors = ['#ff0a54','#ff477e','#ff85a1','#ffd76a','#7ef0d6','#f0f0f0'];
+  const duration=2000;
+  const end=Date.now()+duration;
+  const colors=['#ff0a54','#ff477e','#ff85a1','#fbb1b1','#f9bec7','#f0f0f0'];
 
-  const confCanvas = document.createElement('canvas');
-  confCanvas.style.position = 'fixed';
-  confCanvas.style.left = 0; confCanvas.style.top = 0;
-  confCanvas.style.width = '100%'; confCanvas.style.height = '100%';
-  confCanvas.style.pointerEvents = 'none';
-  confCanvas.style.zIndex = 9999;
-  document.body.appendChild(confCanvas);
-
-  const ctx = confCanvas.getContext('2d');
-  confCanvas.width = window.innerWidth; confCanvas.height = window.innerHeight;
-
-  const pieces = [];
-  for(let i=0;i<160;i++){
-    pieces.push({
-      x: Math.random()*confCanvas.width,
-      y: Math.random()*confCanvas.height - confCanvas.height,
-      r: 2 + Math.random()*6,
+  const confettis=[];
+  for(let i=0;i<150;i++){
+    confettis.push({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight - window.innerHeight,
+      r:2+Math.random()*4,
+      d:Math.random()*100,
       color: colors[Math.floor(Math.random()*colors.length)],
-      speed: 2 + Math.random()*4,
-      tilt: Math.random()*10 - 5
+      tilt: Math.floor(Math.random()*10)-10
     });
   }
 
-  function frame(){
-    ctx.clearRect(0,0,confCanvas.width,confCanvas.height);
-    pieces.forEach(p=>{
-      ctx.beginPath();
-      ctx.moveTo(p.x + p.tilt, p.y);
-      ctx.lineTo(p.x, p.y + p.r*2);
-      ctx.strokeStyle = p.color;
-      ctx.lineWidth = p.r;
-      ctx.stroke();
-      p.y += p.speed;
-      p.tilt += 0.2;
-      if(p.y > confCanvas.height + 40){ p.y = -20; p.x = Math.random()*confCanvas.width; }
-    });
-    if(Date.now() < end) requestAnimationFrame(frame);
-    else { document.body.removeChild(confCanvas); }
-  }
-  frame();
-}
+  const canvas=document.createElement('canvas');
+  canvas.style.position='fixed';
+  canvas.style.top=0;
+  canvas.style.left=0;
+  canvas.style.width='100%';
+  canvas.style.height='100%';
+  canvas.style.pointerEvents='none';
+  document.body.appendChild(canvas);
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
 
-/* ---------- Polaroid share card generator ---------- */
-function sharePolaroid(){
-  if(!chosenText || !chosenVibe) return;
-  const vibeMeta = vibes.find(v=>v.key === chosenVibe) || vibes[0];
-
-  // create hi-res canvas for crisp download
-  const W = 1200, H = 1500;
-  shareCanvas.width = W; shareCanvas.height = H;
-  // responsive display size
-  const displayW = Math.min(window.innerWidth - 32, 420);
-  shareCanvas.style.width = displayW + 'px';
-  shareCanvas.style.height = (displayW * (H / W)) + 'px';
-
-  const ctx = shareCanvas.getContext('2d');
-
-  // fill polaroid white background
-  ctx.fillStyle = '#ffffff';
-  roundRect(ctx, 30, 30, W - 60, H - 60, 28);
-  ctx.fill();
-
-  // inner area gradient (vibe)
-  const innerX = 30 + 24;
-  const innerY = 30 + 24;
-  const innerW = W - (60 + 48);
-  const innerH = H - (60 + 48 + 240); // leave bottom for footer/polaroid look
-
-  const g = ctx.createLinearGradient(innerX, innerY, innerX, innerY + innerH);
-  g.addColorStop(0, vibeMeta.gradient[0]);
-  g.addColorStop(1, vibeMeta.gradient[1]);
-  ctx.fillStyle = g;
-  roundRect(ctx, innerX, innerY, innerW, innerH, 20);
-  ctx.fill();
-
-  // decorative speckles
-  for(let i=0;i<36;i++){
-    ctx.fillStyle = 'rgba(255,255,255,' + (0.06 + Math.random()*0.14) + ')';
-    const sx = innerX + 20 + Math.random()*(innerW - 40);
-    const sy = innerY + 30 + Math.random()*(innerH - 70);
-    ctx.beginPath(); ctx.arc(sx, sy, 1 + Math.random()*3, 0, Math.PI*2); ctx.fill();
-  }
-
-  // Header: mode label (use vibe font)
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#ffffff';
-  ctx.font = `bold 56px ${stripFont(vibeMeta.font)}`;
-  ctx.fillText(mode === 'fortune' ? "🔮 Your 2026 Fortune" : "🎵 Your 2026 Theme Song", W/2, innerY + 64);
-
-  // emoji under header
-  ctx.font = `48px ${stripFont(vibeMeta.font)}`;
-  ctx.fillText(vibeMeta.emoji, W/2, innerY + 120);
-
-  // main text block (dark text for readability on polaroid white bottom)
-  ctx.fillStyle = '#0b0b0b';
-  const mainFontSize = 44;
-  ctx.font = `normal ${mainFontSize}px ${stripFont(vibeMeta.font)}`;
-  const textX = innerX + 40;
-  const textYStart = innerY + 200;
-  const textWidth = innerW - 80;
-  wrapTextCanvas(ctx, chosenText, textX, textYStart, textWidth, mainFontSize + 14);
-
-  // polaroid bottom divider
-  ctx.strokeStyle = 'rgba(0,0,0,0.06)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(innerX, innerY + innerH + 24);
-  ctx.lineTo(innerX + innerW, innerY + innerH + 24);
-  ctx.stroke();
-
-  // footer brand (Studio De l'Arnet)
-  ctx.fillStyle = '#000';
-  ctx.font = `700 28px ${stripFont(vibeMeta.font)}`;
-  ctx.textAlign = 'center';
-  ctx.fillText("Studio De l’Arnet ✨ @studio.del.arnet", W/2, innerY + innerH + 88);
-
-  // small mode icon left
-  ctx.font = `24px ${stripFont(vibeMeta.font)}`;
-  ctx.textAlign = 'left';
-  ctx.fillText(mode === 'fortune' ? '🔮' : '🎧', innerX + 18, innerY + innerH + 88);
-
-  // reveal canvas
-  show(shareCanvas);
-
-  // try using native share if available; otherwise trigger download after short delay
-  setTimeout(()=> {
-    try {
-      if(navigator.share){
-        fetch(shareCanvas.toDataURL()).then(res => res.blob()).then(blob => {
-          const file = new File([blob], `StudioDeLArnet_${chosenVibe}.png`, { type: 'image/png' });
-          navigator.share({
-            title: `Studio De l'Arnet — ${chosenVibe}`,
-            text: `${mode === 'fortune' ? 'My 2026 Fortune' : 'My 2026 Theme Song'} — ${chosenVibe}`,
-            files: [file]
-          }).catch(()=>{ /* ignore share errors */ });
-        }).catch(()=>{ /* ignore fetch errors */ });
-      } else {
-        // nothing — user can click "save" via browser long-press or we trigger download elsewhere
-      }
-    } catch(e){ /* ignore */ }
-  }, 600);
-}
-
-/* ---------- small canvas helpers ---------- */
-function roundRect(ctx, x, y, w, h, r){
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
-
-function wrapTextCanvas(ctx, text, x, y, maxWidth, lineHeight){
-  const words = text.split(' ');
-  let line = '';
-  let currY = y;
-  for(let n=0;n<words.length;n++){
-    const testLine = line + words[n] + ' ';
-    const metrics = ctx.measureText(testLine);
-    if(metrics.width > maxWidth && n > 0){
-      ctx.fillText(line, x + maxWidth/2, currY);
-      line = words[n] + ' ';
-      currY += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  ctx.fillText(line, x + maxWidth/2, currY);
-}
-
-/* strip font family to single-family usage in canvas */
-function stripFont(fontStr){
-  return fontStr.split(',')[0].replace(/['"]/g,'').trim();
-}
-
-/* ---------- sparkle background animation (mirrorball area) ---------- */
-(function sparkleInit(){
-  const c = sparkleCanvas;
-  const ctx = c.getContext('2d');
-  function resize(){ c.width = c.clientWidth; c.height = c.clientHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-
-  const dots = [];
-  for(let i=0;i<80;i++){
-    dots.push({ x: Math.random()*c.width, y: Math.random()*c.height, r:1 + Math.random()*2.4, t: Math.random()*1000 });
-  }
   function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    dots.forEach(d=>{
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    confettis.forEach(c=>{
       ctx.beginPath();
-      ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(255,255,255,' + (0.06 + 0.5*Math.abs(Math.sin((Date.now()+d.t)/900))) + ')';
-      ctx.fill();
+      ctx.moveTo(c.x+c.tilt,c.y);
+      ctx.lineTo(c.x,c.y+c.r);
+      ctx.strokeStyle=c.color;
+      ctx.lineWidth=c.r;
+      ctx.stroke();
+      c.y+=3;
+      c.tilt+=0.1;
+      if(c.y>canvas.height) c.y=-10;
     });
-    requestAnimationFrame(draw);
+    if(Date.now()<end) requestAnimationFrame(draw);
+    else document.body.removeChild(canvas);
   }
   draw();
-})();
-
-/* ---------- DOM ready: wire events and initial render ---------- */
-document.addEventListener('DOMContentLoaded', ()=>{
-  // wire primary buttons
-  document.getElementById('fortuneBtn').addEventListener('click', ()=>startMode('fortune'));
-  document.getElementById('songBtn').addEventListener('click', ()=>startMode('song'));
-  document.getElementById('backBtn').addEventListener('click', ()=>{ hide(step2); show(step1); });
-  document.getElementById('shareBtn').addEventListener('click', ()=> {
-    sharePolaroid();
-    // auto-download fallback: trigger download of canvas as PNG after small delay
-    setTimeout(()=> {
-      try {
-        const link = document.createElement('a');
-        link.href = shareCanvas.toDataURL('image/png');
-        link.download = `StudioDeLArnet_${chosenVibe}.png`;
-        link.click();
-      } catch(e){ /* ignore download errors */ }
-    }, 900);
-  });
-
-  renderVibes();
-
-  // if device already revealed, show a subtle notice (optional)
-  if(localStorage.getItem(REVEAL_KEY)){
-    // you could disable CTAs or show a notice; currently we leave UI but will alert on new reveal attempts
-  }
-});
-
-/* ---------- one-reveal guard when starting mode ---------- */
-function startMode(selected){
-
-  mode = selected;
-  hide(step1);
-  renderVibes();
-  show(step2);
-  document.getElementById('vibePrompt').textContent = mode === 'fortune' ? "Pick your vibe for a Fortune 🔮" : "Pick your vibe for a Theme Song 🎵";
 }
 
-// ensure there's only one startMode definition (in case of merging)
-window.startMode = startMode;
+// ---- POLAROID CARD ----
+function sharePolaroid(){
+  shareCanvas.classList.remove('hidden');
+  const ctx=shareCanvas.getContext('2d');
+  shareCanvas.width=400; shareCanvas.height=500;
+
+  // gradient frame
+  const grad=ctx.createLinearGradient(0,0,0,shareCanvas.height);
+  const frameColors=vibes.find(v=>v.name===lastVibe).frame.split(',');
+  grad.addColorStop(0,frameColors[0]);
+  grad.addColorStop(1,frameColors[1]);
+  ctx.fillStyle=grad;
+  ctx.fillRect(0,0,shareCanvas.width,shareCanvas.height);
+
+  // white card bottom
+  ctx.fillStyle="#fff";
+  ctx.fillRect(10,shareCanvas.height-60,shareCanvas.width-20,50);
+
+  // card border
+  ctx.strokeStyle="#fff";
+  ctx.lineWidth=10;
+  ctx.strokeRect(10,10,shareCanvas.width-20,shareCanvas.height-20);
+
+  // sparkle dots
+  for(let i=0;i<40;i++){
+    ctx.fillStyle="#fff";
+    const x=Math.random()*shareCanvas.width;
+    const y=Math.random()*shareCanvas.height;
+    const size=1+Math.random()*3;
+    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2); ctx.fill();
+  }
+
+  // text
+  const vibeObj=vibes.find(v=>v.name===lastVibe);
+  ctx.fillStyle="#fff";
+  ctx.font=`bold 22px ${vibeObj.font}`;
+  ctx.textAlign="center";
+  ctx.fillText(mode==='fortune'?"🔮 Your 2026 Fortune":"🎵 Your 2026 Theme Song",shareCanvas.width/2,50);
+  ctx.fillText(vibeObj.emoji,shareCanvas.width/2,80);
+
+  ctx.fillStyle="#000";
+  ctx.font=`18px ${vibeObj.font}`;
+  wrapText(ctx,lastResult,30,130,shareCanvas.width-60,24);
+
+  ctx.fillStyle="#000";
+  ctx.font="14px Arial";
+  ctx.fillText("Studio De l’Arnet ✨ @studio.del.arnet",shareCanvas.width/2,shareCanvas.height-35);
+}
+
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+  const words=text.split(' '); let line='';
+  for(let n=0;n<words.length;n++){
+    const testLine=line+words[n]+' ';
+    const metrics=ctx.measureText(testLine);
+    const testWidth=metrics.width;
+    if(testWidth>maxWidth && n>0){
+      ctx.fillText(line,x+maxWidth/2,y);
+      line=words[n]+' '; y+=lineHeight;
+    }else{ line=testLine; }
+  }
+  ctx.fillText(line,x+maxWidth/2,y);
+}
+
+// ---- HOMEPAGE ANIMATION ----
+const canvasH=document.getElementById('homepageCanvas');
+const ctxH=canvasH.getContext('2d');
+canvasH.width=window.innerWidth;
+canvasH.height=250;
+const notes=[];
+for(let i=0;i<40;i++){
+  notes.push({
+    x:Math.random()*canvasH.width,
+    y:Math.random()*canvasH.height,
+    r:5+Math.random()*5,
+    speed:1+Math.random()*2,
+    color:`hsl(${Math.random()*360},80%,70%)`
+  });
+}
+function drawHomepage(){
+  ctxH.clearRect(0,0,canvasH.width,canvasH.height);
+  notes.forEach(n=>{
+    ctxH.beginPath();
+    ctxH.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctxH.fillStyle=n.color;
+    ctxH.fill();
+    n.y -= n.speed;
+    if(n.y<0) n.y=canvasH.height;
+  });
+  requestAnimationFrame(drawHomepage);
+}
+drawHomepage();
 
 </script>
 
-  localStorage.removeItem("vibeMachineUsed");
+</body>
+</html>
