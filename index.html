@@ -242,11 +242,7 @@ function renderVibes(){
 }
 
 /* ---------- start mode (fortune or song) ---------- */
-function startMode(selected){
-  if(localStorage.getItem(REVEAL_KEY)){
-    alert("One reveal per device — thanks! Try another device if you'd like a different reveal.");
-    return;
-  }
+
   mode = selected;
   hide(step1);
   renderVibes();
@@ -542,10 +538,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 /* ---------- one-reveal guard when starting mode ---------- */
 function startMode(selected){
-  if(localStorage.getItem(REVEAL_KEY)){
-    alert("One reveal per device — thanks! Try another device if you'd like a different reveal.");
-    return;
-  }
+
   mode = selected;
   hide(step1);
   renderVibes();
